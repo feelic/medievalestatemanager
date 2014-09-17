@@ -1,6 +1,8 @@
 function MapCell(engine, cell) {
 	this.engine = engine;
 	this.cell = cell;
+	this.id = this.cell.site.voronoiId;
+
 	this.path = [];
 
 	/*
@@ -8,12 +10,14 @@ function MapCell(engine, cell) {
 	 *
 	 */
 	this.render = function () {
-
+		this.getRenderParameters();
 		var ctx = this.engine.canvas.getContext('2d');
 
 		ctx.fillStyle = this.color;
+		//ctx.strokeStyle = '#000';
+		
 		ctx.beginPath();
-		ctx.strokeStyle = '#000';
+
 		ctx.moveTo(this.path[0].x,this.path[0].y);
 		for (var i = 1; i < this.path.length; i++) {
 			ctx.lineTo(this.path[i].x,this.path[i].y);
@@ -23,11 +27,10 @@ function MapCell(engine, cell) {
 		ctx.fill();
 		
 		ctx.textAlign = "center";
-		//ctx.fillStyle = '#f00';
 		
-		//ctx.fillRect(this.cell.site.x,this.cell.site.y,1,1);
-		//ctx.fillText(this.height,this.cell.site.x-2/3,this.cell.site.y-2/3);
-		
+		ctx.fillStyle = '#FFF';
+		ctx.font = "bold 16px Arial";
+		//if (this.height>4 || this.height < 0) ctx.fillText(this.height,this.cell.site.x-2/3,this.cell.site.y-2/3);
 	}
 
 	/*
@@ -79,33 +82,12 @@ function MapCell(engine, cell) {
 			}
 		}
 		else {
-			console.log('what');
-			console.log(this.id)
+			console.log("define path error on cell "+this.id)
 		}
 
 		//this.logPath();
 	}
-	
-	/*
-	 * Détermine le type de province
-	 *
-	 */
-	this.defineType = function () {
-		if (this.height <= 0) {
-			this.type = "sea";
-		}
-		else if (this.height == 3) {
-			this.type = "hills";
-		}
-		else if (this.height == 4) {
-			this.type = "mountains";
-		}
-		else {
-			this.type= "plains";
-		}
-		
-		this.getRenderParameters();
-	}
+
 	/*
 	 * Récupère le path à partir de la cellule voronoi
 	 *
@@ -140,7 +122,6 @@ function MapCell(engine, cell) {
 	 *
 	 */
 	this.isScreenBorders = function () {
-		//console.log(this.cell.halfedges.length)
 		for (var i = 0; i < this.cell.halfedges.length; i++) {
 			var e = this.cell.halfedges[i].edge;
 
@@ -153,25 +134,20 @@ function MapCell(engine, cell) {
 
 		return false;
 	}
-
-	/*
-	 * Attribue des données random
-	 *
-	 */
-	this.randomize = function () {
-		if(this.isScreenBorders()) this.height = -1
-		else this.height = Math.floor(getRandomInRange(-1, 5));
-	}
 	
 	/*
 	 * Attribue les paramètres de rendu
 	 *
 	 */
 	this.getRenderParameters = function () {
-		if(this.type=="sea") this.color = '#428A9E';
-		if(this.type=="plains") this.color = '#6BC66E';
-		if(this.type=="hills") this.color = '#98A641';
-		if(this.type=="mountains") this.color = '#80762A';
+		if(this.height == -2) this.color = '#2e6689';
+		if(this.height <= -1) this.color = '#327A8E';
+		if(this.height == 0) this.color = '#428A9E';
+		if(this.height == 1) this.color = '#6BC66E';
+		if(this.height == 2) this.color = '#6BC66E';
+		if(this.height == 3) this.color = '#98A641';
+		if(this.height == 4) this.color = '#80762A';
+		if(this.height > 4) this.color = '#70661A';
 	}
 
 
@@ -189,13 +165,20 @@ function MapCell(engine, cell) {
 			}
 		}
 		else {
-			console.log('what');
-						console.log(this.id)
+			console.log('error overZero def on cell '+this.id);
 		}
 	}
 
-	this.definePath();
-	this.randomize();
-	this.defineType();
+	this.getNeighbours = function () {
+		n = [];
+		for (var i = 0; i < this.cell.halfedges.length; i++) {
+			if(this.cell.halfedges[i].edge.lSite.voronoiId != this.id) 
+				n.push(this.cell.halfedges[i].edge.lSite.voronoiId);
+			else 
+				n.push(this.cell.halfedges[i].edge.rSite.voronoiId);
+		}
+		return n;
+	}
 
+	this.definePath();
 }

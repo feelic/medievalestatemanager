@@ -19,13 +19,13 @@ function Localisation (loc) {
 	this.getRandomName = function (t) {
 		switch (t) {
 			case 'm' :
-				return this.mnames[Math.floor(Math.random()*this.mnames.length-1)];
+				return this.mnames[Math.floor(Math.random()*this.mnames.length)];
 				break;
 			case 'f' :
-				return this.fnames[Math.floor(Math.random()*this.fnames.length-1)];
+				return this.fnames[Math.floor(Math.random()*this.fnames.length)];
 				break;
 			case 'city' :
-				return this.citynames[Math.floor(Math.random()*this.citynames.length-1)];
+				return this.citynames[Math.floor(Math.random()*this.citynames.length)];
 				break;
 			default :
 				break;

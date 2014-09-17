@@ -25,8 +25,8 @@ function Game (startmode) {
 		document.write(this.getUiContainer());
 				
 		this.engine = new Engine();
-		this.engine.newRandomWorld(200,8, function(){
-		console.log(this)
+		this.engine.newRandomWorld(1000,8, function(){
+			console.log(this)
 			this.render();
 		});
 
