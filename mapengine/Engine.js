@@ -1,4 +1,4 @@
-function Engine () {
+function Engine (canvasId) {
 
 	this.mapcells = [];
 	this.width = 800;
@@ -6,10 +6,14 @@ function Engine () {
 	this.bbox = {xl:0, xr:this.width, yt:0, yb:this.height};
 	this.diagram = null;
 	this.margin = 0.1;
-	
-	this.render = function(){
-		this.canvas = document.getElementById('voronoiCanvas');
-		
+
+	this.canvas = document.getElementById(canvasId);
+
+	/*
+	 * Renders the map cells to an html element (with id = canvasId)
+	 */
+	this.render = function() {
+
 		var ctx = this.canvas.getContext('2d');
 		ctx.globalAlpha = 1;
 		ctx.beginPath();
@@ -23,6 +27,9 @@ function Engine () {
 		}
 	}
 	
+	/*
+	 * Generates the corresponding voronoi diagram for a new random set of points, then applies noise to the borders and fools around with heights
+	 */
 	this.newRandomWorld = function(cellCount, edgeNoise, callback) {
 	
 		this.grid = new random2DPointSet(this.width, this.height, 100, cellCount);
@@ -42,6 +49,9 @@ function Engine () {
 		if(callback) callback.call(this);
 	}
 	
+	/*
+	 * Gets a random noised path for each border between cells
+	 */
 	this.applyNoisetoAllTheEdges = function(strength) {
 		for(var i = 0; i < this.diagram.edges.length;i++){
 			var e = this.diagram.edges[i];
@@ -49,8 +59,11 @@ function Engine () {
 		}
 	}
 
+	/*
+	 * Uses a drunkard walk to set random heights on the map, then defines the height of all remaining cells
+	 */
 	this.randomizeHeights = function (chains, chainLength) {
-		//Les bordures de l'écran sont forcément de l'eau
+		//Screen border are always water
 		for (var i = 0; i < this.mapcells.length; i++) {
 
 			if (this.mapcells[i].isScreenBorders()) {
@@ -58,10 +71,8 @@ function Engine () {
 			}
 		}
 		
-		//ON créée des chaines prédéterminées
+		//create a number of mountain ranges
 		for(var i = 0; i < chains; i++)	{
-			//console.log('chain ' +i)
-
 			var h = 4;
 			var cell = this.mapcells[Math.floor(Math.random()*this.mapcells.length)];
 			for(var j = 0; j < chainLength; j++) {
@@ -80,8 +91,18 @@ function Engine () {
 			}
 		}
 
-		//On fait les calculs de moyenne pour toutes les autres cellules
-		
+		//sets heights according to neighbours to some random cells
+		for (var i = 0; i < this.mapcells.length/4; i++) {
+			var a = Math.floor(Math.random()*this.mapcells.length);
+			if (!this.mapcells[a].height && this.mapcells[a].height != 0) {
+				var h = this.getAvgHeightFromCellList(this.mapcells[a].getNeighbours()) + getRandomInArray([-1,0,0,0,0,1]);
+				if (h < -2) h = -2;
+				if (h > 5) h = 5;
+				this.mapcells[a].height = h;
+			}
+		}
+
+		//sets the remaining cells heights
 		for (var i = 0; i < this.mapcells.length; i++) {
 			if (!this.mapcells[i].height && this.mapcells[i].height != 0) {
 				var h = this.getAvgHeightFromCellList(this.mapcells[i].getNeighbours()) + getRandomInArray([-1,0,0,0,0,1]);
@@ -93,6 +114,9 @@ function Engine () {
 		}
 	}
 	
+	/*
+	 * Gets the average height from an array of cell ids
+	 */
 	this.getAvgHeightFromCellList = function (idList){
 		a = 0;
 		t = 0;
@@ -103,6 +127,62 @@ function Engine () {
 			}
 		}
 		return Math.round(a/t);
+	}
+	
+	/*
+	 * Cell selector
+	 */
+	this.selectCellAtPoint = function (point) {
+
+		var m = substractPoints(point, this.getCanvasOffset());
+
+		var c = this.getCellFromPoint(m);
+		//console.log(c)
+		if (c != -1) {
+			this.renderCellSelection(c);
+		}
+	}
+
+	/*
+	 * returns the id of the cell containing the point parameter
+	 */
+	this.getCellFromPoint = function (point) {
+		for (var i = 0; i < this.mapcells.length; i++) {
+			if (isPointInPoly(this.mapcells[i].path, point)) return this.mapcells[i].id;
+		}
+		console.log('Not a cell');
+		return -1;
+	}
+
+	/*
+	 * re renders currently selected cell
+	 */
+	this.renderCellSelection = function (cellId) {
+		//cancel previous selection
+		if(this.selectedCell) {
+			this.selectedCell.strokeColor = false;
+			this.selectedCell.render();
+		}
+		//adds border
+		this.selectedCell = this.mapcells[cellId];
+		this.selectedCell.strokeColor = 'red';
+		this.selectedCell.render();
+	}
+
+	/*
+	 * gets canvas offset on the page for coordinate ajustment
+	 */
+	this.getCanvasOffset = function() {
+		var element = this.canvas
+		var top = 0, left = 0;
+		do {
+			top += element.offsetTop  || 0;
+			left += element.offsetLeft || 0;
+			element = element.offsetParent;
+		} while(element);
+
+		console.log({ y: top, x: left })
+		return { y: top, x: left };
 	}
 }
 
@@ -161,4 +241,21 @@ function getRandomIntegerInRange (min, max) {
 
 function getRandomInArray(a) {
 	return a[Math.floor(Math.random()*a.length)];
+}
+
+function addPoints( a, b ) {
+	return { x: a.x + b.x, y : a.y + b.y }
+}
+function substractPoints( a, b ) {
+	return { x: a.x - b.x, y : a.y - b.y }
+}
+
+//+ Jonas Raoni Soares Silva
+//@ http://jsfromhell.com/math/is-point-in-poly [rev. #0]
+function isPointInPoly(poly, pt){
+    for(var c = false, i = -1, l = poly.length, j = l - 1; ++i < l; j = i)
+        ((poly[i].y <= pt.y && pt.y < poly[j].y) || (poly[j].y <= pt.y && pt.y < poly[i].y))
+        && (pt.x < (poly[j].x - poly[i].x) * (pt.y - poly[i].y) / (poly[j].y - poly[i].y) + poly[i].x)
+        && (c = !c);
+    return c;
 }

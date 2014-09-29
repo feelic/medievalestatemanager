@@ -1,6 +1,9 @@
-function Plot () {
+function Plot (cell) {
 
 	this.id;
+
+	this.cell = cell;
+	this.cell.ownerObject = this;
 
 	this.plotTypes = [ "forest", "moors", "plains", "coast", "hills", "arid" ];
 	this.type = "";
@@ -8,9 +11,14 @@ function Plot () {
 	this.surface;
 	this.baseHumidity;
 
-	this.region;
+	this.owner;
+	this.plot;
+	this.population = [];
 
-	this.manager;
+	this.buildings = [];
+
+	this.exploitationTypes = ["agriculture", "herding", "foresting", "quarry", "mining"] ;
+	this.exploitationType = "";
 
 	this.soilQuality = 100;
 	this.forestation = 80;
@@ -54,7 +62,7 @@ function Plot () {
 				break;
 		};
 
-		//présence de bétail = mauvais pour les arbres, bon pour le terreau (?)
+		//Cattle presence => good for the soil, but bad for the forests ? 
 		//TODO
 		
 		this.forestation = this.forestation * ffactor; 
@@ -69,5 +77,45 @@ function Plot () {
 	this.setRegion = function (r) {
 		this.region = r;
 		r.addPlot(this);
+	}
+
+	this.getSurface = function () {
+		if (this.surface) return this.surface;
+		else {
+			this.surface = this.cell.getArea();
+			return this.surface;
+		}
+	}
+
+	this.getPop = function () {
+		return this.population.length;
+	}
+
+	this.getPopDensity = function () {
+		return this.getSurface() / this.getPop();
+	}
+
+	this.getPopDensityBracket = function () {
+		var d = this.getPopDensity()
+		if (d > 20) return 'high';
+		else if (d > 10) return 'medium';
+		else return 'low';
+	}
+	
+	this.seasonChange = function () {
+		//Pop has babies
+		for (var i = 0; i < this.population.length; i++){
+			this.population[i].haveChild();
+		}
+	}
+
+	/*
+	 * Updates the cells rendering parameters and draws it
+	 */
+	this.render = function () {
+		var parameters = {
+			"forestation" : this.forestation
+		};
+		this.cell.render(parameters);
 	}
 }

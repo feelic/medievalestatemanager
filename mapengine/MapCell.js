@@ -1,31 +1,43 @@
 function MapCell(engine, cell) {
+
 	this.engine = engine;
+	this.ownerObject;
+
 	this.cell = cell;
 	this.id = this.cell.site.voronoiId;
 
 	this.path = [];
 
 	/*
-	 * Trace le polygone
-	 *
+	 * Draws the cell
 	 */
-	this.render = function () {
-		this.getRenderParameters();
+	this.render = function (parameters) {
+
+		if (parameters) this.updateRenderingParameters(parameters);
+
+		this.getDefaultRenderingParameters();
+
 		var ctx = this.engine.canvas.getContext('2d');
 
+		ctx.fillStyle = '#2e6689';
 		ctx.fillStyle = this.color;
-		//ctx.strokeStyle = '#000';
-		
+
 		ctx.beginPath();
 
 		ctx.moveTo(this.path[0].x,this.path[0].y);
 		for (var i = 1; i < this.path.length; i++) {
 			ctx.lineTo(this.path[i].x,this.path[i].y);
 		}
-		//ctx.stroke();
+
 		ctx.closePath();
 		ctx.fill();
 		
+		if (this.strokeColor) {
+			console.log(this.strokeColor);
+			ctx.strokeStyle = this.strokeColor;
+			ctx.stroke();
+		}		
+
 		ctx.textAlign = "center";
 		
 		ctx.fillStyle = '#FFF';
@@ -34,8 +46,7 @@ function MapCell(engine, cell) {
 	}
 
 	/*
-	 * Récupère le path à partir de la cellule voronoi
-	 *
+	 * Gets the path from the voronoi cell 
 	 */
 	this.definePath = function () {
 		this.overZero();
@@ -49,15 +60,15 @@ function MapCell(engine, cell) {
 			this.path.push(edges[0].va);
 			var i = 0;
 			while ( edges.length > 0) {
-				//dernier point inséré
+				//Last inserted point
 				var a = this.path[this.path.length-1];
-				//segment à traiter
+				//Vertex to process
 				var v = edges[i%edges.length];
 				var va = edges[i%edges.length].va;
 				var vb = edges[i%edges.length].vb;
 				//console.log(Math.floor(va.x)+':'+Math.floor(va.y)+' '+Math.floor(vb.x)+':'+Math.floor(vb.y));
 				var msg = '';
-				//on ignore l'ordre dans lequel est écrit le segment, il ne faut pas ajouter deux fois le mm point
+				//The paths can be A - B or B - A, there is no way of knowing beforehand, we need to check for that, and not put twice the same point
 				if ( (a.x == va.x) && (a.y == va.y) ) {
 					edges.splice(edges.indexOf(v), 1);
 					this.path = this.path.concat(v.path);
@@ -89,8 +100,7 @@ function MapCell(engine, cell) {
 	}
 
 	/*
-	 * Récupère le path à partir de la cellule voronoi
-	 *
+	 * Logs the path from the voronoi cell
 	 */
 	this.logHEdges = function () {
 		for (var i = 0; i < this.cell.halfedges.length; i++) {
@@ -104,7 +114,7 @@ function MapCell(engine, cell) {
 		}
 	}
 	/*
-	 * Récupère le path à partir de la cellule voronoi
+	 * Logs the path
 	 *
 	 */
 	this.logPath = function () {
@@ -118,7 +128,7 @@ function MapCell(engine, cell) {
 	}
 
 	/*
-	 * Renvoie true si le poly se trouve sur les bords du canevas, false sinon
+	 * Checks if the cell is on the borders of the screen
 	 *
 	 */
 	this.isScreenBorders = function () {
@@ -136,10 +146,9 @@ function MapCell(engine, cell) {
 	}
 	
 	/*
-	 * Attribue les paramètres de rendu
-	 *
+	 * Default colors according to height
 	 */
-	this.getRenderParameters = function () {
+	this.getDefaultRenderingParameters = function () {
 		if(this.height == -2) this.color = '#2e6689';
 		if(this.height <= -1) this.color = '#327A8E';
 		if(this.height == 0) this.color = '#428A9E';
@@ -150,9 +159,18 @@ function MapCell(engine, cell) {
 		if(this.height > 4) this.color = '#70661A';
 	}
 
+	/*
+	 * Gets an object of parameters, applies it to the cell
+	 */
+	this.updateRenderingParameters = function (parameters) {
+		for(key in parameters) {
+			this[key] = parameters[key];
+		}
+	}
+
 
 	/*
-	 * s'assure que tous les points sont > 0
+	 * Checks if all points are > 0, if not, set to 0
 	 *
 	 */
 	this.overZero = function () {
@@ -169,6 +187,10 @@ function MapCell(engine, cell) {
 		}
 	}
 
+	/*
+	 * Gets an array of the cell's neighbours ids
+	 *
+	 */
 	this.getNeighbours = function () {
 		n = [];
 		for (var i = 0; i < this.cell.halfedges.length; i++) {
@@ -180,6 +202,10 @@ function MapCell(engine, cell) {
 		return n;
 	}
 
+	/*
+	 * Calculates the Area of the cell
+	 *
+	 */
 	this.getArea = function () {
 		if (this.path) {
 			var area = 0;
