@@ -180,5 +180,18 @@ function MapCell(engine, cell) {
 		return n;
 	}
 
+	this.getArea = function () {
+		if (this.path) {
+			var area = 0;
+			var j = this.path.length-1;
+
+			for (var i=0; i<this.path.length; i++) { 
+				area = area +  (this.path[j].x+this.path[i].x) * (this.path[j].y-this.path[i].y); 
+				j = i;  //j is previous vertex to i
+			}
+			return area/2;
+		}
+		else return false;
+	}
 	this.definePath();
 }

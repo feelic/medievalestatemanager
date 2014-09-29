@@ -144,8 +144,8 @@ function getRandomPointBetween (A, B) {
 	
 	n = Math.abs(A.x - B.x)/2;
 	m = Math.abs(A.y - B.y)/2;
-	point.x = ( A.x + B.x ) / 2 + getRandomIntegerInRange(-n, n);
-	point.y = ( A.y + B.y ) / 2 + getRandomIntegerInRange(-m, m);
+	point.x = Math.round(( A.x + B.x ) / 2 + getRandomIntegerInRange(-n, n));
+	point.y = Math.round(( A.y + B.y ) / 2 + getRandomIntegerInRange(-m, m));
 
 	return point;
 }

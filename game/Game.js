@@ -17,7 +17,7 @@ function Game (startmode) {
 	//default dev values 
 	if (startmode == 'dev') {
 
-		this.localisation = new Localisation('Brittany');
+		//this.localisation = new Localisation('Brittany');
 		this.player = new Player('human');
 		this.region = new Region();
 		this.time = new Seasons(0);
