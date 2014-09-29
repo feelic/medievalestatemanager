@@ -35,13 +35,20 @@ function MapCell(engine, cell) {
 		if (this.strokeColor) {
 			console.log(this.strokeColor);
 			ctx.strokeStyle = this.strokeColor;
-			ctx.stroke();
-		}		
 
+		}	
+		else {
+			ctx.strokeStyle = '#666';
+		}
+		ctx.stroke();
 		ctx.textAlign = "center";
+
+		//ctx.fillRect(this.cell.site.x,this.cell.site.y,1,1);
 		
-		ctx.fillStyle = '#FFF';
-		ctx.font = "bold 16px Arial";
+		
+		ctx.fillStyle = 'red';
+		ctx.font = "bold 8px Arial";
+		ctx.fillText(this.id,this.cell.site.x,this.cell.site.y)
 		//if (this.height>4 || this.height < 0) ctx.fillText(this.height,this.cell.site.x-2/3,this.cell.site.y-2/3);
 	}
 
