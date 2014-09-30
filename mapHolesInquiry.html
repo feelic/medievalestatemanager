@@ -1,14 +1,16 @@
-<canvas id="voronoiCanvas" width="600" height="600" style="border:1px solid gray;"></canvas>
+<canvas id="sampleCanvas" width="100" height="100" style="border:1px solid gray;"></canvas>
+<canvas id="workCanvas" width="100" height="100" style="border:1px solid gray;"></canvas>
+<canvas id="targetCanvas" width="100" height="100" style="border:1px solid gray;"></canvas>
 <script>
 // THESE ARE THE VALUES FOR ONE OF THE CELLS THAT DO NOT SHOW ON THE MAP : THIS REQUIRES FURTHER INQUIRY
 function Test () {
-	this.samplePath = [{"x":3.5067114093959724,"y":479.6476510067114},{"x":3.5067114093959724,"y":479.6476510067114},{"x":5,"y":481},{"x":4,"y":480},{"x":3,"y":480},{"x":2,"y":480},{"x":2,"y":480},{"x":2,"y":480},{"x":0,"y":479},{"x":4.440892098500626e-16,"y":478.6979166666667}]
-
-	this.halfedges = [
+	this.samplePath = [{"x":3.5067114093959724,"y":79.6476510067114},{"x":3.5067114093959724,"y":79.6476510067114},{"x":5,"y":81},{"x":4,"y":80},{"x":3,"y":80},{"x":2,"y":80},{"x":2,"y":80},{"x":2,"y":80},{"x":0,"y":79},{"x":4.440892098500626e-16,"y":78.6979166666667}]
+	this.path = [];
+	this.cell = { "halfedges" : [
 		{
 			"site": {
 				"x": 15,
-				"y": 457,
+				"y": 57,
 				"voronoiId": 548
 			},
 			"edge": {
@@ -19,53 +21,53 @@ function Test () {
 				},
 				"rSite": {
 					"x": 15,
-					"y": 457,
+					"y": 57,
 					"voronoiId": 548
 				},
 				"vb": {
 					"x": 4.440892098500626e-16,
-					"y": 478.6979166666667
+					"y": 78.6979166666667
 				},
 				"va": {
 					"x": 3.5067114093959724,
-					"y": 479.6476510067114
+					"y": 79.6476510067114
 				},
 				"path": [
 					{
 						"x": 3.5067114093959724,
-						"y": 479.6476510067114
+						"y": 79.6476510067114
 					},
 					{
 						"x": 5,
-						"y": 481
+						"y": 81
 					},
 					{
 						"x": 4,
-						"y": 480
+						"y": 80
 					},
 					{
 						"x": 3,
-						"y": 480
+						"y": 80
 					},
 					{
 						"x": 2,
-						"y": 480
+						"y": 80
 					},
 					{
 						"x": 2,
-						"y": 480
+						"y": 80
 					},
 					{
 						"x": 2,
-						"y": 480
+						"y": 80
 					},
 					{
 						"x": 0,
-						"y": 479
+						"y": 79
 					},
 					{
 						"x": 4.440892098500626e-16,
-						"y": 478.6979166666667
+						"y": 78.6979166666667
 					}
 				]
 			},
@@ -74,64 +76,64 @@ function Test () {
 		{
 			"site": {
 				"x": 15,
-				"y": 457,
+				"y": 57,
 				"voronoiId": 548
 			},
 			"edge": {
 				"lSite": {
 					"x": 27,
-					"y": 470,
+					"y": 70,
 					"voronoiId": 561
 				},
 				"rSite": {
 					"x": 15,
-					"y": 457,
+					"y": 57,
 					"voronoiId": 548
 				},
 				"vb": {
 					"x": 3.5067114093959724,
-					"y": 479.6476510067114
+					"y": 79.6476510067114
 				},
 				"va": {
 					"x": 12.23913043478261,
-					"y": 471.5869565217391
+					"y": 71.5869565217391
 				},
 				"path": [
 					{
 						"x": 12.23913043478261,
-						"y": 471.5869565217391
+						"y": 71.5869565217391
 					},
 					{
 						"x": 13,
-						"y": 472
+						"y": 72
 					},
 					{
 						"x": 11,
-						"y": 475
+						"y": 75
 					},
 					{
 						"x": 10,
-						"y": 475
+						"y": 75
 					},
 					{
 						"x": 6,
-						"y": 474
+						"y": 74
 					},
 					{
 						"x": 6,
-						"y": 475
+						"y": 75
 					},
 					{
 						"x": 7,
-						"y": 476
+						"y": 76
 					},
 					{
 						"x": 6,
-						"y": 476
+						"y": 76
 					},
 					{
 						"x": 3.5067114093959724,
-						"y": 479.6476510067114
+						"y": 79.6476510067114
 					}
 				]
 			},
@@ -140,64 +142,64 @@ function Test () {
 		{
 			"site": {
 				"x": 15,
-				"y": 457,
+				"y": 57,
 				"voronoiId": 548
 			},
 			"edge": {
 				"lSite": {
 					"x": 25,
-					"y": 464,
+					"y": 64,
 					"voronoiId": 556
 				},
 				"rSite": {
 					"x": 15,
-					"y": 457,
+					"y": 57,
 					"voronoiId": 548
 				},
 				"vb": {
 					"x": 12.23913043478261,
-					"y": 471.5869565217391
+					"y": 71.5869565217391
 				},
 				"va": {
 					"x": 25.223076923076924,
-					"y": 453.03846153846155
+					"y": 53.03846153846155
 				},
 				"path": [
 					{
 						"x": 25.223076923076924,
-						"y": 453.03846153846155
+						"y": 53.03846153846155
 					},
 					{
 						"x": 23,
-						"y": 459
+						"y": 59
 					},
 					{
 						"x": 16,
-						"y": 465
+						"y": 65
 					},
 					{
 						"x": 17,
-						"y": 470
+						"y": 70
 					},
 					{
 						"x": 13,
-						"y": 471
+						"y": 71
 					},
 					{
 						"x": 14,
-						"y": 471
+						"y": 71
 					},
 					{
 						"x": 14,
-						"y": 471
+						"y": 71
 					},
 					{
 						"x": 12,
-						"y": 471
+						"y": 71
 					},
 					{
 						"x": 12.23913043478261,
-						"y": 471.5869565217391
+						"y": 71.5869565217391
 					}
 				]
 			},
@@ -206,64 +208,64 @@ function Test () {
 		{
 			"site": {
 				"x": 15,
-				"y": 457,
+				"y": 57,
 				"voronoiId": 548
 			},
 			"edge": {
 				"lSite": {
 					"x": 35,
-					"y": 458,
+					"y": 58,
 					"voronoiId": 549
 				},
 				"rSite": {
 					"x": 15,
-					"y": 457,
+					"y": 57,
 					"voronoiId": 548
 				},
 				"vb": {
 					"x": 25.223076923076924,
-					"y": 453.03846153846155
+					"y": 53.03846153846155
 				},
 				"va": {
 					"x": 25.81769722814499,
-					"y": 441.1460554371002
+					"y": 41.1460554371002
 				},
 				"path": [
 					{
 						"x": 25.81769722814499,
-						"y": 441.1460554371002
+						"y": 41.1460554371002
 					},
 					{
 						"x": 26,
-						"y": 441
+						"y": 41
 					},
 					{
 						"x": 26,
-						"y": 445
+						"y": 45
 					},
 					{
 						"x": 26,
-						"y": 446
+						"y": 46
 					},
 					{
 						"x": 26,
-						"y": 444
+						"y": 44
 					},
 					{
 						"x": 26,
-						"y": 446
+						"y": 46
 					},
 					{
 						"x": 27,
-						"y": 450
+						"y": 50
 					},
 					{
 						"x": 25,
-						"y": 451
+						"y": 51
 					},
 					{
 						"x": 25.223076923076924,
-						"y": 453.03846153846155
+						"y": 53.03846153846155
 					}
 				]
 			},
@@ -272,64 +274,64 @@ function Test () {
 		{
 			"site": {
 				"x": 15,
-				"y": 457,
+				"y": 57,
 				"voronoiId": 548
 			},
 			"edge": {
 				"lSite": {
 					"x": 44,
-					"y": 435,
+					"y": 35,
 					"voronoiId": 520
 				},
 				"rSite": {
 					"x": 15,
-					"y": 457,
+					"y": 57,
 					"voronoiId": 548
 				},
 				"vb": {
 					"x": 25.81769722814499,
-					"y": 441.1460554371002
+					"y": 41.1460554371002
 				},
 				"va": {
 					"x": 17.952282157676347,
-					"y": 430.7780082987552
+					"y": 30.7780082987552
 				},
 				"path": [
 					{
 						"x": 17.952282157676347,
-						"y": 430.7780082987552
+						"y": 30.7780082987552
 					},
 					{
 						"x": 19,
-						"y": 434
+						"y": 34
 					},
 					{
 						"x": 21,
-						"y": 435
+						"y": 35
 					},
 					{
 						"x": 21,
-						"y": 435
+						"y": 35
 					},
 					{
 						"x": 22,
-						"y": 441
+						"y": 41
 					},
 					{
 						"x": 25,
-						"y": 441
+						"y": 41
 					},
 					{
 						"x": 25,
-						"y": 440
+						"y": 40
 					},
 					{
 						"x": 24,
-						"y": 442
+						"y": 42
 					},
 					{
 						"x": 25.81769722814499,
-						"y": 441.1460554371002
+						"y": 41.1460554371002
 					}
 				]
 			},
@@ -338,64 +340,64 @@ function Test () {
 		{
 			"site": {
 				"x": 15,
-				"y": 457,
+				"y": 57,
 				"voronoiId": 548
 			},
 			"edge": {
 				"lSite": {
 					"x": 15,
-					"y": 457,
+					"y": 57,
 					"voronoiId": 548
 				},
 				"rSite": {
 					"x": 1,
-					"y": 451,
+					"y": 51,
 					"voronoiId": 537
 				},
 				"vb": {
 					"x": 0,
-					"y": 472.6666666666667
+					"y": 72.6666666666667
 				},
 				"va": {
 					"x": 17.952282157676347,
-					"y": 430.7780082987552
+					"y": 30.7780082987552
 				},
 				"path": [
 					{
 						"x": 17.952282157676347,
-						"y": 430.7780082987552
+						"y": 30.7780082987552
 					},
 					{
 						"x": 12,
-						"y": 433
+						"y": 33
 					},
 					{
 						"x": 12,
-						"y": 443
+						"y": 43
 					},
 					{
 						"x": 4,
-						"y": 451
+						"y": 51
 					},
 					{
 						"x": 2,
-						"y": 461
+						"y": 61
 					},
 					{
 						"x": 2,
-						"y": 468
+						"y": 68
 					},
 					{
 						"x": 1,
-						"y": 471
+						"y": 71
 					},
 					{
 						"x": 1,
-						"y": 473
+						"y": 73
 					},
 					{
 						"x": 0,
-						"y": 472.6666666666667
+						"y": 72.6666666666667
 					}
 				]
 			},
@@ -404,66 +406,66 @@ function Test () {
 		{
 			"site": {
 				"x": 15,
-				"y": 457,
+				"y": 57,
 				"voronoiId": 548
 			},
 			"edge": {
 				"lSite": {
 					"x": 15,
-					"y": 457,
+					"y": 57,
 					"voronoiId": 548
 				},
 				"rSite": null,
 				"vb": {
 					"x": 0,
-					"y": 478.6979166666667
+					"y": 78.6979166666667
 				},
 				"va": {
 					"x": 0,
-					"y": 472.6666666666667
+					"y": 72.6666666666667
 				},
 				"path": [
 					{
 						"x": 0,
-						"y": 472.6666666666667
+						"y": 72.6666666666667
 					},
 					{
 						"x": 0,
-						"y": 472
+						"y": 72
 					},
 					{
 						"x": 0,
-						"y": 473
+						"y": 73
 					},
 					{
 						"x": 0,
-						"y": 473
+						"y": 73
 					},
 					{
 						"x": 0,
-						"y": 473
+						"y": 73
 					},
 					{
 						"x": 0,
-						"y": 475
+						"y": 75
 					},
 					{
 						"x": 0,
-						"y": 478
+						"y": 78
 					},
 					{
 						"x": 0,
-						"y": 478
+						"y": 78
 					},
 					{
 						"x": 0,
-						"y": 478.6979166666667
+						"y": 78.6979166666667
 					}
 				]
 			},
 			"angle": 3.141592653589793
 		}
-	]
+	]}
 
 	this.definePath = function () {
 		this.overZero();
@@ -530,35 +532,64 @@ function Test () {
 		}
 	}
 
-	var canvas = document.getElementById('voronoiCanvas');
-	var ctx = canvas.getContext('2d');
+	// DRAW FAULTY PATH
+	this.drawFaultyPath = function () {
 
-	ctx.fillStyle = '#2e6689';
+		var canvas = document.getElementById('sampleCanvas');
+		var ctx = canvas.getContext('2d');
 
-	ctx.beginPath();
+		ctx.beginPath();
 
-	ctx.moveTo(path[0].x,path[0].y);
-	for (var i = 1; i < path.length; i++) {
-		ctx.lineTo(path[i].x,path[i].y);
+		ctx.moveTo(this.samplePath[0].x,this.samplePath[0].y);
+		for (var i = 1; i < this.samplePath.length; i++) {
+			ctx.lineTo(this.samplePath[i].x,this.samplePath[i].y);
+		}
+
+		ctx.strokeStyle = '#666';
+		ctx.stroke();
+
 	}
 
-	for (var i = 0; i < this.halfedges.length; i++){
-		 ctx.moveTo(this.halfedges[i].edge.va.x,this.halfedges[i].edge.va.y,1,1 )   
-		 ctx.lineTo(this.halfedges[i].edge.vb.x,this.halfedges[i].edge.vb.y,1,1 )  
+	// DRAW TARGET FIGURE
+	this.drawTargetFigure = function () {
+
+		var canvas = document.getElementById('targetCanvas');
+		var ctx = canvas.getContext('2d');
+
+		ctx.beginPath();
+
+		for (var i = 0; i < this.cell.halfedges.length; i++){
+			 ctx.moveTo(this.cell.halfedges[i].edge.va.x,this.cell.halfedges[i].edge.va.y,1,1 )   
+			 ctx.lineTo(this.cell.halfedges[i].edge.vb.x,this.cell.halfedges[i].edge.vb.y,1,1 )  
+		}
+		ctx.strokeStyle = '#666';
+		ctx.stroke();
 	}
 
-	this.definePath();
-	
-	ctx.moveTo(this.path[0].x,this.path[0].y);
-	for (var i = 1; i < this.path.length; i++) {
-		ctx.lineTo(this.path[i].x,this.path[i].y);
-	}
-	
-	ctx.closePath();
-	ctx.fill();
+	// DRAW TARGET FIGURE
+	this.drawDefinedPath = function () {
 
-	ctx.strokeStyle = '#666';
-	ctx.stroke();
+		this.definePath();
+
+		var canvas = document.getElementById('workCanvas');
+		var ctx = canvas.getContext('2d');
+
+		ctx.beginPath();
+
+		ctx.moveTo(this.path[0].x,this.path[0].y);
+		for (var i = 1; i < this.path.length; i++) {
+			ctx.lineTo(this.path[i].x,this.path[i].y);
+		}
+
+		ctx.strokeStyle = '#666';
+		ctx.stroke();
+	}
+
 }
 var t = new Test();
+
+t.drawFaultyPath();
+t.drawTargetFigure();
+t.drawDefinedPath();
+
 </script>
