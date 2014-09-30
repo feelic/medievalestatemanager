@@ -246,6 +246,7 @@ function getRandomInArray(a) {
 function addPoints( a, b ) {
 	return { x: a.x + b.x, y : a.y + b.y }
 }
+
 function substractPoints( a, b ) {
 	return { x: a.x - b.x, y : a.y - b.y }
 }

@@ -21,7 +21,7 @@ function MapCell(engine, cell) {
 
 		ctx.fillStyle = '#2e6689';
 		ctx.fillStyle = this.color;
-
+		ctx.fillStyle = '#aaa';
 		ctx.beginPath();
 
 		ctx.moveTo(this.path[0].x,this.path[0].y);
@@ -45,11 +45,11 @@ function MapCell(engine, cell) {
 
 		//ctx.fillRect(this.cell.site.x,this.cell.site.y,1,1);
 		
-		
+		/*
 		ctx.fillStyle = 'red';
 		ctx.font = "bold 8px Arial";
 		ctx.fillText(this.id,this.cell.site.x,this.cell.site.y)
-		//if (this.height>4 || this.height < 0) ctx.fillText(this.height,this.cell.site.x-2/3,this.cell.site.y-2/3);
+		*/
 	}
 
 	/*
@@ -73,28 +73,26 @@ function MapCell(engine, cell) {
 				var v = edges[i%edges.length];
 				var va = edges[i%edges.length].va;
 				var vb = edges[i%edges.length].vb;
-				//console.log(Math.floor(va.x)+':'+Math.floor(va.y)+' '+Math.floor(vb.x)+':'+Math.floor(vb.y));
+
 				var msg = '';
 				//The paths can be A - B or B - A, there is no way of knowing beforehand, we need to check for that, and not put twice the same point
-				if ( (a.x == va.x) && (a.y == va.y) ) {
+				if ( Math.floor(100*a.x)/100 == Math.floor(100*va.x)/100 && Math.floor(100*a.y)/100 == Math.floor(100*va.y)/100 ) {
 					edges.splice(edges.indexOf(v), 1);
 					this.path = this.path.concat(v.path);
 					i = 0;
-					msg = 'a == vb ('+Math.floor(10*a.x)/10+':'+Math.floor(10*a.y)/10+')';
 				}
-				else if ( (a.x == vb.x) && (a.y == vb.y) ) {
+				else if ( Math.floor(100*a.x )/100== Math.floor(100*vb.x)/100 && Math.floor(100*a.y)/100 == Math.floor(100*vb.y)/100  ) {
 					edges.splice(edges.indexOf(v), 1);
 					for(var j = (v.path.length-1);j>=0;j--) {
 						this.path.push(v.path[j]);
 					}
 					i = 0;
-					msg = 'a == va ('+Math.floor(10*a.x)/10+':'+Math.floor(10*a.y)/10+')';
 				}
 				else {
-					msg = '... ('+Math.floor(10*a.x)/10+':'+Math.floor(10*a.y)/10+')';
+
 					i++;
 				}
-				//console.log(i+' : '+edges.length+' '+Math.floor(10*va.x)/10+':'+Math.floor(10*va.y)/10+' - '+Math.floor(10*vb.x)/10+':'+Math.floor(10*vb.y)/10+' '+msg)
+
 				if( i >= 50 ) break;
 
 			}
