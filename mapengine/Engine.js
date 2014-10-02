@@ -65,7 +65,6 @@ function Engine (canvasId) {
 	this.randomizeHeights = function (chains, chainLength) {
 		//Screen border are always water
 		for (var i = 0; i < this.mapcells.length; i++) {
-
 			if (this.mapcells[i].isScreenBorders()) {
 				this.mapcells[i].height = -1;
 			}
@@ -90,6 +89,11 @@ function Engine (canvasId) {
 				}
 			}
 		}
+		//a little bit more randomness, shall we?
+		for (var i = 0; i < this.mapcells.length/100; i++) {
+			var a = Math.floor(Math.random()*this.mapcells.length);
+			this.mapcells[a].height = getRandomInArray([-1,0,1,2,3]);
+		}
 
 		//sets heights according to neighbours to some random cells
 		for (var i = 0; i < this.mapcells.length/4; i++) {
@@ -111,6 +115,12 @@ function Engine (canvasId) {
 				this.mapcells[i].height = h;
 			}
 			//getRandomIntegerInRange(-1,1);
+		}
+		//Screen border are ALWAYS water
+		for (var i = 0; i < this.mapcells.length; i++) {
+			if (this.mapcells[i].isScreenBorders()) {
+				this.mapcells[i].height = -1;
+			}
 		}
 	}
 	
@@ -161,6 +171,8 @@ function Engine (canvasId) {
 		//cancel previous selection
 		if(this.selectedCell) {
 			this.selectedCell.strokeColor = false;
+			var n = this.selectedCell.getNeighbours();
+			for(var i = 0; i < n.length;i++) this.mapcells[n[i]].render();
 			this.selectedCell.render();
 		}
 		//adds border

@@ -21,7 +21,7 @@ function MapCell(engine, cell) {
 
 		ctx.fillStyle = '#2e6689';
 		ctx.fillStyle = this.color;
-		ctx.fillStyle = '#aaa';
+		//ctx.fillStyle = '#aaa';
 		ctx.beginPath();
 
 		ctx.moveTo(this.path[0].x,this.path[0].y);
@@ -39,6 +39,7 @@ function MapCell(engine, cell) {
 		}	
 		else {
 			ctx.strokeStyle = '#666';
+			//ctx.strokeStyle = this.color;
 		}
 		ctx.stroke();
 		ctx.textAlign = "center";
@@ -199,9 +200,9 @@ function MapCell(engine, cell) {
 	this.getNeighbours = function () {
 		n = [];
 		for (var i = 0; i < this.cell.halfedges.length; i++) {
-			if(this.cell.halfedges[i].edge.lSite.voronoiId != this.id) 
+			if(this.cell.halfedges[i].edge.lSite && this.cell.halfedges[i].edge.lSite.voronoiId != this.id) 
 				n.push(this.cell.halfedges[i].edge.lSite.voronoiId);
-			else 
+			else if (this.cell.halfedges[i].edge.rSite)
 				n.push(this.cell.halfedges[i].edge.rSite.voronoiId);
 		}
 		return n;
