@@ -10,7 +10,7 @@ function Game (startmode) {
 	this.getUiContainer = function () {
 
 		var c = '<div id="leftmenu"><div>'+this.time.getWeatherReport()+'</div><div><a id="nextTurn">next turn</a></div></div>';
-		c += '<div id="mappanel"><canvas id="voronoiCanvas" width="800px" height="800px" draggable="true"></canvas></div>';
+		c += '<div id="mappanel"><canvas id="voronoiCanvas" width="800px" height="800px"></canvas></div>';
 		c += '<div id="rightpanel"></div>';
 		return c;
 	}
