@@ -1,0 +1,33 @@
+body {
+	margin:0;
+	padding:0;
+}
+
+#leftmenu {
+	width:180px;
+	height:800px;
+	padding:1px;
+	display:block;
+	float:left;
+	border:1px solid #666;
+}
+
+#weatherbox {
+
+}
+
+#mappanel {
+	width:800px;
+	height:800px;
+	display:block;
+	float:left;
+	border:1px solid #666;
+}
+
+#rightpanel {
+	width:800px;
+	height:800px;
+	display:block;
+	float:left;
+	border:1px solid #666;
+}

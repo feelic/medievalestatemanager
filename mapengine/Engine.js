@@ -1,5 +1,7 @@
 function Engine (canvasId) {
 
+	var that = this;
+
 	this.mapcells = [];
 	this.width = 800;
 	this.height = 800;
@@ -8,6 +10,10 @@ function Engine (canvasId) {
 	this.margin = 0.1;
 
 	this.canvas = document.getElementById(canvasId);
+	this.scaleFactor = 1;
+	this.zoomLevel = 1;
+	this.pan = {x : 0, y : 0};
+	this.origin = { x : 0, y : 0 };
 
 	/*
 	 * Renders the map cells to an html element (with id = canvasId)
@@ -15,13 +21,15 @@ function Engine (canvasId) {
 	this.render = function() {
 
 		var ctx = this.canvas.getContext('2d');
-		ctx.globalAlpha = 1;
-		ctx.beginPath();
-		ctx.rect(0,0,this.canvas.width,this.canvas.height);
+		ctx.clearRect(0,0,this.width,this.height);
+
+		ctx.rect(0,0,this.width,this.height);
 		ctx.fillStyle = '#428A9E';
 		ctx.fill();
-		ctx.strokeStyle = '#000';
-		ctx.stroke();
+
+		ctx.translate(this.pan.x,this.pan.y);
+		ctx.scale(this.scaleFactor,this.scaleFactor);
+
 		for (var i = 0; i < this.mapcells.length; i++) {
 			this.mapcells[i].render();
 		}
@@ -145,6 +153,13 @@ function Engine (canvasId) {
 	this.selectCellAtPoint = function (point) {
 
 		var m = substractPoints(point, this.getCanvasOffset());
+		// Adjust point with current zoom
+		m.x = m.x/this.zoomLevel;
+		m.y = m.y/this.zoomLevel;
+
+		// Adjust point with current origin
+		m.x = m.x - this.origin.x/this.zoomLevel;
+		m.y = m.y - this.origin.y/this.zoomLevel;
 
 		var c = this.getCellFromPoint(m);
 		//console.log(c)
@@ -165,7 +180,7 @@ function Engine (canvasId) {
 	}
 
 	/*
-	 * re renders currently selected cell
+	 * re-renders currently selected cell
 	 */
 	this.renderCellSelection = function (cellId) {
 		//cancel previous selection
@@ -193,82 +208,121 @@ function Engine (canvasId) {
 			element = element.offsetParent;
 		} while(element);
 
-		console.log({ y: top, x: left })
 		return { y: top, x: left };
 	}
-}
 
-//RANDOM 2D POINT SET
-function random2DPointSet( width, height, min_dist, count ) {
-	this.width = width;
-	this.height = height;
-	
-	this.cellSize = min_dist/Math.sqrt(2);
-	this.iw = Math.ceil(width/this.cellSize);
-	this.ih = Math.ceil(height/this.cellSize);
-	
-	this.points = [];
+	/*
+	 * Zooms In
+	 */
+	this.zoomIn = function () {
+		if (this.zoomLevel < 2) { 
+			// Puts the origin back to 1:1 scale
+			this.origin.x = this.origin.x * (1 / this.zoomLevel);
+			this.origin.y = this.origin.y * (1 / this.zoomLevel);
 
-	for (var i = 0;i < count;i++) {
-		var x = getRandomIntegerInRange(0, width);
-		var y = getRandomIntegerInRange(0, height);
-		this.points.push({ x : x, y : y });
+			// set scale and zoom
+			this.scaleFactor = 1.5; 
+			this.zoomLevel += 0.5;
+
+			// set pan to 0 and ajust origin to zoom level
+			this.pan = { x:0, y:0 }
+			this.origin.x = this.origin.x * this.zoomLevel;
+			this.origin.y = this.origin.y * this.zoomLevel;
+
+			console.log('zoom in '+this.zoomLevel+' factor '+this.scaleFactor)
+			this.render();
+		}
 	}
-}
 
-//UTIL FUNCTIONS
-function getNoisedPath (A, B, i) {
-	var p = [A];
-	var ps = getNoisedSegment (A, B,i/4);
-	p = p.concat(ps);
-	p.push(B);
-	return p;
-}
+	/*
+	 * Zooms Out
+	 */
+	this.zoomOut = function () {
+		if (this.zoomLevel > 1) {
+			// Puts the origin back to 1:1 scale
+			this.origin.x = this.origin.x * (1 / this.zoomLevel);
+			this.origin.y = this.origin.y * (1 / this.zoomLevel);
 
-function getNoisedSegment (A, B, i) {
-	var mid = getRandomPointBetween (A, B);
-	if (i > 0) return getNoisedSegment(A, mid, Math.floor(i/2) ).concat(mid, getNoisedSegment(mid,B,Math.floor(i/2)) );
-	else return [mid];
-}
+			// set scale and zoom
+			this.scaleFactor = 1 / 1.5; 
+			this.zoomLevel -= 0.5;
 
-function getRandomPointBetween (A, B) {
-	var point = {};
-	
-	n = Math.abs(A.x - B.x)/2;
-	m = Math.abs(A.y - B.y)/2;
-	point.x = Math.round(( A.x + B.x ) / 2 + getRandomIntegerInRange(-n, n));
-	point.y = Math.round(( A.y + B.y ) / 2 + getRandomIntegerInRange(-m, m));
+			// set pan to 0 and ajust origin to zoom level
+			this.pan = { x:0, y:0 }
+			this.origin.x = this.origin.x / this.zoomLevel;
+			this.origin.y = this.origin.y / this.zoomLevel;
 
-	return point;
-}
+			console.log('zoom out '+this.zoomLevel+' factor '+this.scaleFactor )
+			this.render();
+		}
+	}
 
-function getRandomInRange (min, max) {
-	return Math.random() * (max - min) + min;
-}
+	/*
+	 * Pan to coordinates
+	 */
+	this.panToCoordinates = function (x, y) {
 
-function getRandomIntegerInRange (min, max) {
-    max+=1;
-	return Math.floor(Math.random() * (max - min) + min);
-}
+		this.scaleFactor = 1;
 
-function getRandomInArray(a) {
-	return a[Math.floor(Math.random()*a.length)];
-}
+		this.pan.x = x;
+		this.pan.y = y;
 
-function addPoints( a, b ) {
-	return { x: a.x + b.x, y : a.y + b.y }
-}
+		this.render();
+	}
 
-function substractPoints( a, b ) {
-	return { x: a.x - b.x, y : a.y - b.y }
-}
+	/*
+	 * Pan canvas according to vertex a b
+	 */
+	this.panWithVertex = function (a,b) {
 
-//+ Jonas Raoni Soares Silva
-//@ http://jsfromhell.com/math/is-point-in-poly [rev. #0]
-function isPointInPoly(poly, pt){
-    for(var c = false, i = -1, l = poly.length, j = l - 1; ++i < l; j = i)
-        ((poly[i].y <= pt.y && pt.y < poly[j].y) || (poly[j].y <= pt.y && pt.y < poly[i].y))
-        && (pt.x < (poly[j].x - poly[i].x) * (pt.y - poly[i].y) / (poly[j].y - poly[i].y) + poly[i].x)
-        && (c = !c);
-    return c;
+		// AJUST VERTEX EITHER HERE
+		var x = ((b.x - a.x) / this.zoomLevel);
+		var y = ((b.y - a.y) / this.zoomLevel);
+
+		// OR THERE
+		this.origin.x += x;
+		this.origin.y += y;
+
+		this.panToCoordinates(x, y);
+	}
+
+	// CANVAS EVENT HANDLER
+	var mousePosition;
+
+	this.canvas.addEventListener("mousedown", function(e){
+		mousePosition = getMouse(e || event);
+	}, false);
+
+	this.canvas.addEventListener("mouseup", function(e){
+		var point = getMouse(e || event);
+		if(segmentLength(point,mousePosition)>10){
+			that.panWithVertex(mousePosition, point);
+		}
+		else {
+			var a = that.selectCellAtPoint(point);
+		}
+	}, false);
+
+
+	this.canvas.addEventListener('DOMMouseScroll', function(e){
+		var delta = 0;
+	 
+		if (!e) e = window.event;
+	 
+		// normalize the delta
+		if (e.wheelDelta) {
+		    // IE and Opera
+		    delta = e.wheelDelta / 60;
+		} else if (e.detail) {
+		    // W3C
+		    delta = -e.detail / 2;
+		}
+	 	if(delta>0) {
+			that.zoomIn();
+		}
+		else {
+			that.zoomOut();
+		}
+
+	}, false);
 }

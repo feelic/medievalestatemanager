@@ -110,12 +110,11 @@ function Plot (cell) {
 	}
 
 	/*
-	 * Updates the cells rendering parameters and draws it
+	 * Updates the cells rendering parameters
 	 */
-	this.render = function () {
-		var parameters = {
+	this.getRenderingParameters = function () {
+		return parameters = {
 			"forestation" : this.forestation
 		};
-		this.cell.render(parameters);
 	}
 }

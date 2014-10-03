@@ -11,11 +11,10 @@ function MapCell(engine, cell) {
 	/*
 	 * Draws the cell
 	 */
-	this.render = function (parameters) {
-
-		if (parameters) this.updateRenderingParameters(parameters);
+	this.render = function () {
 
 		this.getDefaultRenderingParameters();
+		if (this.ownerObject && this.ownerObject.getRenderingParameters) this.ownerObject.getRenderingParameters();
 
 		var ctx = this.engine.canvas.getContext('2d');
 
@@ -33,9 +32,7 @@ function MapCell(engine, cell) {
 		ctx.fill();
 		
 		if (this.strokeColor) {
-			console.log(this.strokeColor);
 			ctx.strokeStyle = this.strokeColor;
-
 		}	
 		else {
 			ctx.strokeStyle = '#666';
