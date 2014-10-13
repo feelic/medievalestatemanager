@@ -79,6 +79,7 @@ function segmentLength(a, b) {
 
 function getMouse(e){
     var w = window, b = document.body;
+	if (!e) var e = window.event;
     return {x: e.clientX + (w.scrollX || b.scrollLeft || b.parentNode.scrollLeft || 0),
     y: e.clientY + (w.scrollY || b.scrollTop || b.parentNode.scrollTop || 0)};
 }

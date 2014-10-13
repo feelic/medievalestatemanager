@@ -7,11 +7,13 @@ function Game (startmode) {
 	/*
 	 * gets Game Container
 	 */
-	this.getUiContainer = function () {
+	this.getUiContainer = function (debug) {
 
-		var c = '<div id="leftmenu"><div>'+this.time.getWeatherReport()+'</div><div><a id="nextTurn">next turn</a></div></div>';
+		var c = '<div id="leftmenu"><div>'+this.time.getWeatherReport()+'</div><div><a id="nextTurn">next turn</a></div>'
+		if (debug) c += '<div style="float:left;" id="enginestatus"></div>'
+		c += '</div>';
 		c += '<div id="mappanel"><canvas id="voronoiCanvas" width="800px" height="800px"></canvas></div>';
-		c += '<div id="rightpanel"></div>';
+		//c += '<div id="rightpanel"></div>';
 		return c;
 	}
 
@@ -36,7 +38,7 @@ function Game (startmode) {
 
 		this.time = new Seasons(0);
 
-		document.write(this.getUiContainer());
+		document.write(this.getUiContainer(true));
 				
 		this.engine = new Engine('voronoiCanvas');
 		this.engine.newRandomWorld(200,16, function(){

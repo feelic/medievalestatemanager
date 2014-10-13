@@ -27,141 +27,40 @@ function Engine (canvasId) {
 		ctx.fillStyle = '#428A9E';
 		ctx.fill();
 
-		ctx.translate(this.pan.x,this.pan.y);
-		ctx.scale(this.scaleFactor,this.scaleFactor);
+		if(this.pan.x != 0 || this.pan.y != 0) {
+			ctx.translate(this.pan.x,this.pan.y);
+
+		}
+		else {
+			ctx.translate(this.origin.x, this.origin.y)
+			ctx.scale(this.scaleFactor,this.scaleFactor);
+			ctx.translate(-this.origin.x, -this.origin.y)
+		}
 
 		for (var i = 0; i < this.mapcells.length; i++) {
 			this.mapcells[i].render();
 		}
-	}
-	
-	/*
-	 * Generates the corresponding voronoi diagram for a new random set of points, then applies noise to the borders and fools around with heights
-	 */
-	this.newRandomWorld = function(cellCount, edgeNoise, callback) {
-	
-		this.grid = new random2DPointSet(this.width, this.height, 100, cellCount);
-			
-		var voronoi = new Voronoi()
-		voronoi.recycle(this.diagram);
-		this.diagram = voronoi.compute(this.grid.points, this.bbox);
-	
-		this.applyNoisetoAllTheEdges(edgeNoise);
-		
-		for (var i = 0; i < this.grid.points.length; i++) {
-			if(this.diagram.cells[i]) this.mapcells.push(new MapCell(this, this.diagram.cells[i]));
-		}
-
-		this.randomizeHeights (Math.ceil(cellCount/500),Math.ceil(cellCount/100));
-
-		if(callback) callback.call(this);
-	}
-	
-	/*
-	 * Gets a random noised path for each border between cells
-	 */
-	this.applyNoisetoAllTheEdges = function(strength) {
-		for(var i = 0; i < this.diagram.edges.length;i++){
-			var e = this.diagram.edges[i];
-			e.path = getNoisedPath(e.va, e.vb, strength);
-		}
+		this.displayStatus();
 	}
 
 	/*
-	 * Uses a drunkard walk to set random heights on the map, then defines the height of all remaining cells
+	 * Displays a box with all the current engine info
 	 */
-	this.randomizeHeights = function (chains, chainLength) {
-		//Screen border are always water
-		for (var i = 0; i < this.mapcells.length; i++) {
-			if (this.mapcells[i].isScreenBorders()) {
-				this.mapcells[i].height = -1;
-			}
-		}
-		
-		//create a number of mountain ranges
-		for(var i = 0; i < chains; i++)	{
-			var h = 4;
-			var cell = this.mapcells[Math.floor(Math.random()*this.mapcells.length)];
-			for(var j = 0; j < chainLength; j++) {
-
-				if (!cell.height && cell.height != 0) {
-
-					cell.height = h;
-					var n = cell.getNeighbours();
-					cell = this.mapcells[n[Math.floor(Math.random()*n.length)]];
-					//console.log(cell);
-				}
-				else {
-					if (i>=0 && j<=0) i--;
-					break;
-				}
-			}
-		}
-		//a little bit more randomness, shall we?
-		for (var i = 0; i < this.mapcells.length/100; i++) {
-			var a = Math.floor(Math.random()*this.mapcells.length);
-			this.mapcells[a].height = getRandomInArray([-1,0,1,2,3]);
-		}
-
-		//sets heights according to neighbours to some random cells
-		for (var i = 0; i < this.mapcells.length/4; i++) {
-			var a = Math.floor(Math.random()*this.mapcells.length);
-			if (!this.mapcells[a].height && this.mapcells[a].height != 0) {
-				var h = this.getAvgHeightFromCellList(this.mapcells[a].getNeighbours()) + getRandomInArray([-1,0,0,0,0,1]);
-				if (h < -2) h = -2;
-				if (h > 5) h = 5;
-				this.mapcells[a].height = h;
-			}
-		}
-
-		//sets the remaining cells heights
-		for (var i = 0; i < this.mapcells.length; i++) {
-			if (!this.mapcells[i].height && this.mapcells[i].height != 0) {
-				var h = this.getAvgHeightFromCellList(this.mapcells[i].getNeighbours()) + getRandomInArray([-1,0,0,0,0,1]);
-				if (h < -2) h = -2;
-				if (h > 5) h = 5;
-				this.mapcells[i].height = h;
-			}
-			//getRandomIntegerInRange(-1,1);
-		}
-		//Screen border are ALWAYS water
-		for (var i = 0; i < this.mapcells.length; i++) {
-			if (this.mapcells[i].isScreenBorders()) {
-				this.mapcells[i].height = -1;
-			}
+	this.displayStatus = function () {
+		var elt = document.getElementById("enginestatus");
+		if (elt) {
+		document.getElementById('enginestatus').innerHTML = '<div id="enginestatus"><table><tr><td>origin</td><td>'+Math.floor(this.origin.x)+'</td><td>'+Math.floor(this.origin.y)+'</td></tr><tr><td>Zoom</td><td>'+this.zoomLevel+'</td><td></td></tr><tr id="enginestatus_click"></tr></table></div>';
 		}
 	}
-	
-	/*
-	 * Gets the average height from an array of cell ids
-	 */
-	this.getAvgHeightFromCellList = function (idList){
-		a = 0;
-		t = 0;
-		for (var i = 0; i < idList.length; i++) {
-			if(this.mapcells[idList[i]].height || this.mapcells[idList[i]].height == 0){
-				a += this.mapcells[idList[i]].height;
-				t++;
-			}
-		}
-		return Math.round(a/t);
-	}
-	
+
+	// **************************************************************************** CELL SELECTION ********************************************************//
+
 	/*
 	 * Cell selector
 	 */
 	this.selectCellAtPoint = function (point) {
-
-		var m = substractPoints(point, this.getCanvasOffset());
-		// Adjust point with current zoom
-		m.x = m.x/this.zoomLevel;
-		m.y = m.y/this.zoomLevel;
-
-		// Adjust point with current origin
-		m.x = m.x - this.origin.x/this.zoomLevel;
-		m.y = m.y - this.origin.y/this.zoomLevel;
-
-		var c = this.getCellFromPoint(m);
+		//receives absolute coordinates 
+		var c = this.getCellFromPoint(point);
 		//console.log(c)
 		if (c != -1) {
 			this.renderCellSelection(c);
@@ -212,24 +111,32 @@ function Engine (canvasId) {
 	}
 
 	/*
+	 * converts coordinates from current zoom to model coordinates
+	 */
+    this.scalePoint = function (p) {
+        var t = (this.zoomLevel - 1) * 10;
+        for (var i = 1; i < t; i++) {
+            p.x = p.x / 1.1;
+            p.y = p.y / 1.1;
+        }
+        return p;
+    }
+
+	// **************************************************************************** MOVEMENT FUNCTIONS ********************************************************//
+
+	/*
 	 * Zooms In
 	 */
 	this.zoomIn = function () {
 		if (this.zoomLevel < 2) { 
-			// Puts the origin back to 1:1 scale
-			this.origin.x = this.origin.x * (1 / this.zoomLevel);
-			this.origin.y = this.origin.y * (1 / this.zoomLevel);
 
 			// set scale and zoom
-			this.scaleFactor = 1.5; 
-			this.zoomLevel += 0.5;
+			this.scaleFactor = 1.1; 
+			this.zoomLevel += 0.1;
 
-			// set pan to 0 and ajust origin to zoom level
+			// set pan to 0
 			this.pan = { x:0, y:0 }
-			this.origin.x = this.origin.x * this.zoomLevel;
-			this.origin.y = this.origin.y * this.zoomLevel;
 
-			console.log('zoom in '+this.zoomLevel+' factor '+this.scaleFactor)
 			this.render();
 		}
 	}
@@ -239,20 +146,14 @@ function Engine (canvasId) {
 	 */
 	this.zoomOut = function () {
 		if (this.zoomLevel > 1) {
-			// Puts the origin back to 1:1 scale
-			this.origin.x = this.origin.x * (1 / this.zoomLevel);
-			this.origin.y = this.origin.y * (1 / this.zoomLevel);
 
 			// set scale and zoom
-			this.scaleFactor = 1 / 1.5; 
-			this.zoomLevel -= 0.5;
+			this.scaleFactor = 1 / 1.1; 
+			this.zoomLevel -= 0.1;
 
-			// set pan to 0 and ajust origin to zoom level
+			// set pan to 0
 			this.pan = { x:0, y:0 }
-			this.origin.x = this.origin.x / this.zoomLevel;
-			this.origin.y = this.origin.y / this.zoomLevel;
 
-			console.log('zoom out '+this.zoomLevel+' factor '+this.scaleFactor )
 			this.render();
 		}
 	}
@@ -286,11 +187,34 @@ function Engine (canvasId) {
 		this.panToCoordinates(x, y);
 	}
 
-	// CANVAS EVENT HANDLER
+    this.toAbsolutePoint = function (p) {
+		//the received Point is calculated from the document origin, we have to ajust it
+		//to start with the canvas origin
+		point = substractPoints(point, this.getCanvasOffset());
+		//with the current zoom level
+		point = this.scalePoint(point);
+		//with the current origin, if the user has moved the map around
+		point = substractPoints(point, this.origin);
+
+        return point;
+    }
+
+    this.scalePoint = function (p) {
+        var t = (this.zoomLevel - 1) * 10;
+        for (var i = 1; i < t; i++) {
+            p.x = p.x / 1.1;
+            p.y = p.y / 1.1;
+        }
+        return p;
+    }
+
+	// **************************************************************************** CANVAS EVENT HANDLER ********************************************************//
 	var mousePosition;
 
 	this.canvas.addEventListener("mousedown", function(e){
+
 		mousePosition = getMouse(e || event);
+
 	}, false);
 
 	this.canvas.addEventListener("mouseup", function(e){
@@ -304,7 +228,8 @@ function Engine (canvasId) {
 	}, false);
 
 
-	this.canvas.addEventListener('DOMMouseScroll', function(e){
+
+    this.scrollController = function (e) {
 		var delta = 0;
 	 
 		if (!e) e = window.event;
@@ -323,6 +248,11 @@ function Engine (canvasId) {
 		else {
 			that.zoomOut();
 		}
+    }
 
-	}, false);
+    // Internet Explorer, Opera, Google Chrome and Safari
+    this.canvas.addEventListener ("mousewheel", this.scrollController, false);
+    // Firefox
+    this.canvas.addEventListener ("DOMMouseScroll", this.scrollController, false);
+
 }
