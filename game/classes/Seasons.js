@@ -10,11 +10,11 @@ function Seasons (i) {
 	this.nextSeason = function () {
 		this.seasonCounter++;
 		this.current = this.seasonNames[this.seasonCounter%4];
-	}
+	};
 
 	this.getSeasonName = function (i) {
 		return this.seasonNames[i%4];
-	}
+	};
 
 	this.getWeatherReport = function () {
 		var w = '<div id="weatherbox"><div>'+this.current+'</div>';
@@ -23,5 +23,5 @@ function Seasons (i) {
 		w += '<div>temperature : '+this.weather.temperature+'</div>';
 		w += '</div>';
 		return w;
-	}
+	};
 }

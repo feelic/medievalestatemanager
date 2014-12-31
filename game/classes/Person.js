@@ -1,30 +1,30 @@
 function Person (data) {
 
-	this.name;
-	this.lastname;
+	this.name = null;
+	this.lastname = null;
 
-	this.birthDate; //Saison de naissance
+	this.birthDate = null; //Saison de naissance
 	this.age = 0;
-	this.sex;
-	this.health;
+	this.sex = 'm';
+	this.health = null;
 	this.alive = true;
 
-	this.status;
-	this.job;
-	this.residence;
+	this.status = 'dead';
+	this.job = null;
+	this.residence = null;
 
-	this.craft;
-	this.level;
+	this.craft = null;
+	this.level = null;
 	this.levels = ["apprentice", "journeyman", "master"];
 
 	this.parents = [];
-	this.spouse;
+	this.spouse = null;
 	this.children = [];
 	this.pregnant = false;
 
 	// CONSTRUCTEUR
 	if (data) {
-		for (key in data) {
+		for (var key in data) {
 			this[key] = data[key];
 		}
 	}
@@ -46,7 +46,7 @@ function Person (data) {
 			else return false;
 		}
 		else return false;
-	}
+	};
 
 	/*
 	 *	Sets Parents
@@ -55,9 +55,9 @@ function Person (data) {
 		this.parents = [];
 		this.parents.push(parentA);
 		this.parents.push(parentB);
-	}
+	};
 
 	this.setResidence = function (r) {
 		//this.residence.pop()
-	}
+	};
 }

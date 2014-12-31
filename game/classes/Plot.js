@@ -1,6 +1,6 @@
 function Plot (cell) {
 
-	this.id;
+	this.id = null;
 
 	this.cell = cell;
 	this.cell.ownerObject = this;
@@ -8,11 +8,11 @@ function Plot (cell) {
 	this.plotTypes = [ "forest", "moors", "plains", "coast", "hills", "arid" ];
 	this.type = "";
 	
-	this.surface;
-	this.baseHumidity;
+	this.surface = 0;
+	this.baseHumidity = 0;
 
-	this.owner;
-	this.plot;
+	this.owner = null;
+	this.plot = null;
 	this.population = [];
 
 	this.buildings = [];
@@ -46,7 +46,7 @@ function Plot (cell) {
 		}
 
 		//current forestation
-		ffactor = (ffactor * 100) / this.forestation
+		ffactor = (ffactor * 100) / this.forestation;
 
 		//pop density
 		switch(this.manager.getPopDensityBracket()) {
@@ -60,24 +60,24 @@ function Plot (cell) {
 				ffactor += 0.1;
 				sfactor += 0.1;
 				break;
-		};
+		}
 
 		//Cattle presence => good for the soil, but bad for the forests ? 
 		//TODO
 		
 		this.forestation = this.forestation * ffactor; 
 		this.soilQuality = this.soilQuality * sfactor; 
-	}
+	};
 
 	this.setManager = function (m) {
 		this.manager = m;
 		m.plot = this;
-	}
+	};
 	
 	this.setRegion = function (r) {
 		this.region = r;
 		r.addPlot(this);
-	}
+	};
 
 	this.getSurface = function () {
 		if (this.surface) return this.surface;
@@ -85,36 +85,36 @@ function Plot (cell) {
 			this.surface = this.cell.getArea();
 			return this.surface;
 		}
-	}
+	};
 
 	this.getPop = function () {
 		return this.population.length;
-	}
+	};
 
 	this.getPopDensity = function () {
 		return this.getSurface() / this.getPop();
-	}
+	};
 
 	this.getPopDensityBracket = function () {
-		var d = this.getPopDensity()
+		var d = this.getPopDensity();
 		if (d > 20) return 'high';
 		else if (d > 10) return 'medium';
 		else return 'low';
-	}
+	};
 	
 	this.seasonChange = function () {
 		//Pop has babies
 		for (var i = 0; i < this.population.length; i++){
 			this.population[i].haveChild();
 		}
-	}
+	};
 
 	/*
 	 * Updates the cells rendering parameters
 	 */
 	this.getRenderingParameters = function () {
-		return parameters = {
+		return {
 			"forestation" : this.forestation
 		};
-	}
+	};
 }

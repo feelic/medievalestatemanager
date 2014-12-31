@@ -9,20 +9,20 @@ function Game (startmode) {
 	 */
 	this.getUiContainer = function (debug) {
 
-		var c = '<div id="leftmenu"><div>'+this.time.getWeatherReport()+'</div><div><a id="nextTurn">next turn</a></div>'
-		if (debug) c += '<div style="float:left;" id="enginestatus"></div>'
+		var c = '<div id="leftmenu"><div>'+this.time.getWeatherReport()+'</div><div><a id="nextTurn">next turn</a></div>';
+		if (debug) c += '<div style="float:left;" id="enginestatus"></div>';
 		c += '</div>';
 		c += '<div id="mappanel"><canvas id="voronoiCanvas" width="800px" height="800px"></canvas></div>';
 		//c += '<div id="rightpanel"></div>';
 		return c;
-	}
+	};
 
 	/*
 	 * tells the plots to render, they then do their stuff themselves
 	 */
 	this.renderMap = function () {
 		this.engine.render();
-	}
+	};
 
 	//build from save
 
@@ -32,7 +32,6 @@ function Game (startmode) {
 
 	//default dev values 
 	if (startmode == 'dev') {
-
 		//this.localisation = new Localisation('Brittany');
 		this.player = new Player('human');
 

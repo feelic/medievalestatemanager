@@ -2,6 +2,6 @@ function Player (type) {
 
 	this.type = 'human';
 	this.lands = [];
-	this.name;
+	this.name = 'no name';
 
 }
