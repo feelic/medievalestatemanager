@@ -31,3 +31,24 @@ body {
 	float:left;
 	border:1px solid #666;
 }
+.btn {
+	display: inline-block;
+	box-sizing: border-box;
+    color: #FFF;
+    text-align: center;
+    font-size:16px;
+    padding:0 25px;
+	line-height:28px;
+    border-radius:2px;
+    text-decoration:none;
+	border:0;
+	min-width:120px;
+	background:#A3A3A3;
+	height:28px;
+	cursor:pointer;
+	margin-bottom: 2px;
+	vertical-align:top;
+}
+.btn:hover {
+	background:#929292;
+}

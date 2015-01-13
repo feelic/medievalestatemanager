@@ -1,14 +1,15 @@
-function Plot (cell) {
+function Plot (cell, game) {
 
-	this.id = null;
+	var game = game;
 
 	this.cell = cell;
+	this.id = this.cell.id;
 	this.cell.ownerObject = this;
 
 	this.plotTypes = [ "forest", "moors", "plains", "coast", "hills", "arid" ];
 	this.type = "";
 	
-	this.surface = 0;
+	this.surface = Math.round(this.cell.getArea());
 	this.baseHumidity = 0;
 
 	this.owner = null;
@@ -32,46 +33,47 @@ function Plot (cell) {
 
 	this.naturalRegrowth = function () {
 
-		var ffactor = 1.1;
-		var sfactor = 1.1;
+		var ffactor = 1.05;
+		var sfactor = 1.05;
+
+		var humidity = this.baseHumidity + game.time.weather.humidity;
 
 		//humidity
-		if ( ((this.baseHumidity + this.region.humidity)/2) >= 60) {
-			ffactor += 0.1;
-			sfactor += 0.1;
+		if ( (humidity / 2) >= 60 ) {
+			ffactor += 0.05;
+			sfactor += 0.05;
 		}
-		else if ( ((this.baseHumidity + this.region.humidity)/2) >= 30) { 
-			ffactor += 0.2;
-			sfactor += 0.1;
+		else if ( (humidity / 2) >= 30 ) { 
+			ffactor += 0.1;
+			sfactor += 0.05;
+		}
+		else if ( (humidity / 2) < 10 ) {
+			ffactor -= 0.1;
+			sfactor -= 0.05;		
 		}
 
 		//current forestation
 		ffactor = (ffactor * 100) / this.forestation;
 
 		//pop density
-		switch(this.manager.getPopDensityBracket()) {
+		switch(this.getPopDensityBracket()) {
 			case 'high': 
-				ffactor -= 0.1;
-				sfactor -= 0.1;
+				ffactor -= 0.05;
+				sfactor -= 0.05;
 				break;
 			case 'medium': 
 				break;
 			case 'low': 
-				ffactor += 0.1;
-				sfactor += 0.1;
+				ffactor += 0.05;
+				sfactor += 0.05;
 				break;
 		}
 
 		//Cattle presence => good for the soil, but bad for the forests ? 
 		//TODO
-		
-		this.forestation = this.forestation * ffactor; 
-		this.soilQuality = this.soilQuality * sfactor; 
-	};
-
-	this.setManager = function (m) {
-		this.manager = m;
-		m.plot = this;
+		console.log(ffactor+' '+sfactor);
+		this.forestation = Math.floor(this.forestation * ffactor*10)/10; 
+		this.soilQuality = Math.floor(this.soilQuality * sfactor*10)/10; 
 	};
 	
 	this.setRegion = function (r) {
@@ -79,20 +81,13 @@ function Plot (cell) {
 		r.addPlot(this);
 	};
 
-	this.getSurface = function () {
-		if (this.surface) return this.surface;
-		else {
-			this.surface = this.cell.getArea();
-			return this.surface;
-		}
-	};
-
 	this.getPop = function () {
 		return this.population.length;
 	};
 
 	this.getPopDensity = function () {
-		return this.getSurface() / this.getPop();
+		console.log(this.surface / this.getPop())
+		return this.surface / this.getPop();
 	};
 
 	this.getPopDensityBracket = function () {
@@ -107,6 +102,7 @@ function Plot (cell) {
 		for (var i = 0; i < this.population.length; i++){
 			this.population[i].haveChild();
 		}
+		this.naturalRegrowth();
 	};
 
 	/*
@@ -117,4 +113,14 @@ function Plot (cell) {
 			"forestation" : this.forestation
 		};
 	};
+
+	this.displayDetails = function () {
+		var d = "<div>";
+		d += "<p>id: "+this.id+"</p>";
+		d += "<p>area: "+this.surface+"</p>";
+		d += "<p>forestation: "+this.forestation+" %</p>";
+		d += "<p>soil quality: "+this.soilQuality+" %</p>";
+		d += "</div>";
+		return d;
+	}
 }

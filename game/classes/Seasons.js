@@ -17,11 +17,10 @@ function Seasons (i) {
 	};
 
 	this.getWeatherReport = function () {
-		var w = '<div id="weatherbox"><div>'+this.current+'</div>';
+		var w = '<div>'+this.current+'</div>';
 		w += '<div>humidity : '+this.weather.humidity+'</div>';
 		w += '<div>rainfall : '+this.weather.rainfall+'</div>';
 		w += '<div>temperature : '+this.weather.temperature+'</div>';
-		w += '</div>';
 		return w;
 	};
 }
