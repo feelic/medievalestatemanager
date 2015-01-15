@@ -9,7 +9,7 @@ function Plot (cell, game) {
 	this.plotTypes = [ "forest", "moors", "plains", "coast", "hills", "arid" ];
 	this.type = "";
 	
-	this.surface = Math.round(this.cell.getArea());
+	this.surface = Math.abs(Math.round(this.cell.getArea()));
 	this.baseHumidity = 0;
 
 	this.owner = null;
@@ -33,47 +33,47 @@ function Plot (cell, game) {
 
 	this.naturalRegrowth = function () {
 
-		var ffactor = 1.05;
-		var sfactor = 1.05;
+		var ffactor = 1.01;
+		var sfactor = 1.01;
 
 		var humidity = this.baseHumidity + game.time.weather.humidity;
 
 		//humidity
 		if ( (humidity / 2) >= 60 ) {
-			ffactor += 0.05;
-			sfactor += 0.05;
+			ffactor += 0.02;
+			sfactor += 0.02;
 		}
 		else if ( (humidity / 2) >= 30 ) { 
-			ffactor += 0.1;
-			sfactor += 0.05;
+			ffactor += 0.01;
+			sfactor += 0.01;
 		}
 		else if ( (humidity / 2) < 10 ) {
-			ffactor -= 0.1;
-			sfactor -= 0.05;		
+			ffactor -= 0.02;
+			sfactor -= 0.01;		
 		}
 
 		//current forestation
-		ffactor = (ffactor * 100) / this.forestation;
+		if (this.forestation > 80) ffactor += 0.01
 
 		//pop density
 		switch(this.getPopDensityBracket()) {
 			case 'high': 
-				ffactor -= 0.05;
-				sfactor -= 0.05;
+				ffactor -= 0.01;
+				sfactor -= 0.01;
 				break;
 			case 'medium': 
 				break;
 			case 'low': 
-				ffactor += 0.05;
-				sfactor += 0.05;
+				ffactor += 0.01;
+				sfactor += 0.01;
 				break;
 		}
-
+		console.log(ffactor)
 		//Cattle presence => good for the soil, but bad for the forests ? 
+
 		//TODO
-		console.log(ffactor+' '+sfactor);
-		this.forestation = Math.floor(this.forestation * ffactor*10)/10; 
-		this.soilQuality = Math.floor(this.soilQuality * sfactor*10)/10; 
+		this.forestation = cap(Math.floor(this.forestation * ffactor*10)/10, 100, 0); 
+		this.soilQuality = cap(Math.floor(this.soilQuality * sfactor*10)/10, 100, 0);  
 	};
 	
 	this.setRegion = function (r) {
@@ -86,8 +86,8 @@ function Plot (cell, game) {
 	};
 
 	this.getPopDensity = function () {
-		console.log(this.surface / this.getPop())
-		return this.surface / this.getPop();
+		if (this.getPop() == 0) return 0
+		else return this.surface / this.getPop();
 	};
 
 	this.getPopDensityBracket = function () {
@@ -118,6 +118,7 @@ function Plot (cell, game) {
 		var d = "<div>";
 		d += "<p>id: "+this.id+"</p>";
 		d += "<p>area: "+this.surface+"</p>";
+		d += "<p>population: "+this.getPop()+"</p>";
 		d += "<p>forestation: "+this.forestation+" %</p>";
 		d += "<p>soil quality: "+this.soilQuality+" %</p>";
 		d += "</div>";

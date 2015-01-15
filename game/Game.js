@@ -37,19 +37,9 @@ function Game (startmode) {
 
 
 	//new game
-
-
-	//default dev values 
-	if (startmode == 'dev') {
-		//this.localisation = new Localisation('Brittany');
-		this.player = new Player('human');
-
-		this.time = new Seasons(0);
-
-		document.write(this.getUiContainer(true));
-				
-		this.engine = new Ptolemy('canvas');
+	this.generateRandomWorld = function () {
 		this.engine.newRandomWorld(200,16, function(){
+			this.bindCellEventsListeners();
 			for (var i = 0; i < this.cells.length; i++) {
 				this.cells[i].on('select',function(){
 					document.getElementById("rightpanel").innerHTML = this.ownerObject.displayDetails();
@@ -61,7 +51,34 @@ function Game (startmode) {
 			}
 			that.renderMap();
 		});
+	}
 
+	//default dev values 
+	if (startmode == 'dev') {
+		//this.localisation = new Localisation('Brittany');
+		this.player = new Player('human');
+
+		this.time = new Seasons(0);
+
+		document.write(this.getUiContainer(true));
+				
+		this.engine = new Ptolemy('canvas');
+		this.generateRandomWorld();
+
+	}
+
+	/*
+	 * Cell events listeners
+	 */
+	this.bindCellEventsListeners = function () {
+		for (var i = 0; i < this.cells.length; i++) {
+			this.cells[i].on('select',function(){
+				document.getElementById("rightpanel").innerHTML = this.ownerObject.displayDetails();
+			});
+			this.cells[i].on('deselect',function(){
+				//console.log('custom deselect event handler '+this.id);
+			});
+		}
 	}
 
 	document.getElementById("nextTurn").addEventListener("click", function( event ) {
