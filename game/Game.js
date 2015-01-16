@@ -1,8 +1,9 @@
 function Game (startmode) {
 
 	var that = this;
-
+	this.dateStart = Date.now();
 	this.plots = [];
+	this.people = [];
 
 	/*
 	 * gets Game Container
@@ -31,57 +32,64 @@ function Game (startmode) {
 		this.time.nextSeason();
 		document.getElementById("weatherbox").innerHTML = this.time.getWeatherReport();
 		for (var i = 0; i < this.plots.length; i++ ) this.plots[i].seasonChange();
+		for (var i = 0; i < this.people.length; i++) this.people[i].age += 0.25;
+
+		if ( this.engine.selectedCell ) document.getElementById("rightpanel").innerHTML = this.engine.selectedCell.ownerObject.displayDetails();
 	}
 
-	//build from save
+	/*
+	 * Cell events listeners
+	 */
+	this.bindCellEventsListeners = function () {
+		for (var i = 0; i < this.engine.cells.length; i++) {
+			this.engine.cells[i].on('select',function(){
+				document.getElementById("rightpanel").innerHTML = this.ownerObject.displayDetails();
+			});
+			this.engine.cells[i].on('deselect',function(){
+				//console.log('custom deselect event handler '+this.id);
+			});
+		}
+	}
 
-
-	//new game
-	this.generateRandomWorld = function () {
-		this.engine.newRandomWorld(200,16, function(){
-			this.bindCellEventsListeners();
+	this.generateRandomWorld = function (size, maxPopulation) {
+		var that = this;
+		this.engine.newRandomWorld(size,16, function(){
+			that.bindCellEventsListeners();
 			for (var i = 0; i < this.cells.length; i++) {
+
 				this.cells[i].on('select',function(){
 					document.getElementById("rightpanel").innerHTML = this.ownerObject.displayDetails();
 				});
 				this.cells[i].on('deselect',function(){
 					//console.log('custom deselect event handler '+this.id);
 				});
-				that.plots.push(new Plot(this.cells[i], that));
+
+				var p = new Plot(this.cells[i]);
+
+				p.addStartingPopulation(maxPopulation);
+
+				that.plots.push(p);
 			}
 			that.renderMap();
 		});
 	}
 
+
 	//default dev values 
 	if (startmode == 'dev') {
-		//this.localisation = new Localisation('Brittany');
-		this.player = new Player('human');
+		this.localisation = new Localisation('Brittany');
+		that.player = new Player('human');
 
-		this.time = new Seasons(0);
+		that.time = new Seasons(0);
 
-		document.write(this.getUiContainer(true));
-				
-		this.engine = new Ptolemy('canvas');
-		this.generateRandomWorld();
+		document.write(that.getUiContainer(true));
+			
+		that.engine = new Ptolemy('canvas');
 
-	}
-
-	/*
-	 * Cell events listeners
-	 */
-	this.bindCellEventsListeners = function () {
-		for (var i = 0; i < this.cells.length; i++) {
-			this.cells[i].on('select',function(){
-				document.getElementById("rightpanel").innerHTML = this.ownerObject.displayDetails();
-			});
-			this.cells[i].on('deselect',function(){
-				//console.log('custom deselect event handler '+this.id);
-			});
-		}
 	}
 
 	document.getElementById("nextTurn").addEventListener("click", function( event ) {
 		that.nextTurn();
 	}, false);
+
 }

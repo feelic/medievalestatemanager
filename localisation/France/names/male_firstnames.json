@@ -2,16 +2,17 @@
 	"file":"male_firstnames",
 	"version" : "1.0",
 	"names" : [
-		"Adélard","Adrien", "Ansèlme", "Arnaut", "Arthur", "Aurèle", 
-		"Barthelemy", "Bartholomé", "Baudoin", "Bérenger", "Bertrand", 
-		"Clément", "Clotaire", "Clovis", "Colin", 
-		"Enguerrand", "Eudes", 
+		"Adélard","Adrien", "Ansèlme", "Arnaut", "Arthur", "Aurèle", "Adhémar",
+		"Barthelemy", "Bartholomé", "Baudoin", "Bérenger", "Bertrand", "Bernard","Benoît",
+		"Clément", "Clotaire", "Clovis", "Colin",  "Dominique",
+		"Enguerrand", "Eudes", "Etienne",
 		"Flavien", "Florentin", "Foulque",
-		"Gaël", "Gaëtan", "Gaspard", "Gaultier", "Gauvin", "Guillaume", "Guethenoc",
-		"Jean", "Jacques"
+		"Gaël", "Gaëtan", "Gaspard", "Gaultier", "Gauvin", "Guillaume", "Guethenoc", "Guildin",
+		"Hugues",
+		"Isidore","Jean", "Jacques"
 		"Maurin", "Michel",
 		"Perceval", "Pierrick", "Paul", "Pierre",
-		"Raoul", "Robin", "Roland", "Roger", "Renaud", "Ranulfe",
+		"Raoul", "Robin", "Roland", "Roger", "Renaud", "Ranulfe","Robert",
 		"Tancrède", "Théobald", "Thimotée", "Thomas"
 	],
 	"best" : ["Anthelme", "Bernard", "Guillaume", "Hugues", "Benoît", "Isidore", "Roger", "Odilon", "Guildin", "Fulbert", "Stanislas", "Robert", "Etienne", "Dominique", "Séverin" ],
