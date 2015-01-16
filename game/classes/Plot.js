@@ -110,7 +110,7 @@ function Plot (cell) {
 		}
 	};
 
-	this.makeMariages = function () {
+	this.makeMariages = function () {
 		var mSingles = [];
 		var fSingles = [];
 		
