@@ -4,9 +4,12 @@ function Plot (cell) {
 	this.id = this.cell.id;
 	this.cell.ownerObject = this;
 
-	this.plotTypes = [ "forest", "moors", "plains", "coast", "hills", "arid" ];
-	this.type = "";
+	this.biomes = [ "forest", "moors", "plains", "coast", "hills", "arid" ];
+	this.biome = "";
 	
+	this.types = [ "manor", "city", "tenure", "servile land", "inhabited" ];
+	this.type = "";
+
 	this.surface = Math.abs(Math.round(this.cell.getArea()));
 	this.baseHumidity = 0;
 
@@ -157,6 +160,7 @@ function Plot (cell) {
 	this.displayDetails = function () {
 		var d = '<div>';
 		d += "<p>id: "+this.id+"</p>";
+		if (this.name) d += "<p>id: "+this.name+"</p>";
 		d += "<p>area: "+this.surface+" ha</p>";
 		d += "<p>population: "+this.getPop()+"</p>";
 		d += "<p>forestation: "+this.forestation+" %</p>";
@@ -171,7 +175,7 @@ function Plot (cell) {
 	this.renderPopList = function (){
 		var p = '<ul>';
 		for(var i = 0; i < this.population.length; i++) {
-			p += '<li><a data-personid="'+this.population[i].id+'">'+this.population[i].name+'</a> ('+this.population[i].age+')</li>';
+			p += '<li><a data-personid="'+this.population[i].id+'">'+this.population[i].name+'</a> ('+Math.floor(this.population[i].age)+')</li>';
 		}
 
 		p += '</ul>';
@@ -179,27 +183,29 @@ function Plot (cell) {
 		return p;
 	}
 
-	this.addStartingPopulation = function (maxCount) {
-		if (this.cell.height >= 1) {
-			var hfactor = this.height/10;
+	this.getNeighbours = function () {
+		return this.cell.neighbours;
+	}
 
-			for( var i = 1; i < maxCount; i ++ ) {
-				var age = 3 + Math.ceil(Math.random()*16);
+	this.addStartingPopulation = function (count) {
+		if (this.cell.height >= 1 && this.type != 'inhabited') {
+			var hfactor = this.height/10;
+			var tfactor = 0;
+			if (this.type == 'manor') tfactor = 0.2;
+			if (this.type == 'city') { tfactor = 0.4; count = count * 2; }
+
+			for( var i = 1; i <count; i ++ ) {
+				var age = 3 + Math.ceil(Math.random()*30);
 				var s = ['m','f'];
 				var p = new Person({
-						'id' : game.people.length,
 						'birthDate' : age * -4,
+						'birthYear' : game.time.startYear - age,
 						'age' : age,
 						'sex' : s[Math.round(Math.random())],
-						'health' : 100,
-						'alive' : true,
-						'status' : 'OK',
 						'residence' : this
 					});
-				game.people.push(p);
 
-				this.population.push(p);
-				if ( 0.1+Math.random() > (3/i + hfactor) ) break;
+				if ( Math.random() > (count/i + hfactor + tfactor) ) break;
 			}
 		}
 	}

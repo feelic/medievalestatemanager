@@ -1,15 +1,14 @@
 function Person (data) {
-
 	this.name = null;
 	this.lastname = null;
 
 	this.birthDate = null; //Saison de naissance
+	this.birthYear = null; //Année de naissance
 	this.age = 0;
 	this.sex = 'm';
-	this.health = null;
+	this.health = 100;
 	this.alive = true;
 
-	this.status = 'dead';
 	this.job = null;
 	this.residence = null;
 
@@ -30,19 +29,17 @@ function Person (data) {
 			var chances = 0.90 * (( 36 - this.age ) / 20);
 			if (randomBoolFromRate(chances)) {
 				
+				var status = 'serf';
+				
+				
 				var s = ['m','f'];
 				var p = new Person({
-						'id' : game.people.length,
 						'birthDate' : game.time.seasonCounter,
-						'age' : 0,
+						'birthYear' : game.time.currentYear,
 						'sex' : s[Math.round(Math.random())],
-						'health' : 100,
-						'alive' : true,
-						'status' : 'OK',
+						'status' : status,
 						'residence' : this.residence
 					});
-				game.people.push(p);
-				this.residence.population.push(p);
 
 				this.children.push(p);
 				this.spouse.children.push(p);
@@ -70,9 +67,12 @@ function Person (data) {
 	};
 
 	this.createName = function () {
+		if (this.status == 'nobility') this.lastname = game.localisation.gen +' '+ this.residence.name;
+
 		if (this.parents && this.parents.length > 0) {
 			this.lastname = this.parents[1].lastname;
 		}
+
 		this.name = game.localisation.getRandomName(this.sex);
 	}
 
@@ -83,4 +83,10 @@ function Person (data) {
 		}
 		if (! this.name ) this.createName();
 	}
+
+	if (!this.id) this.id = game.people.length;
+
+	game.people.push(this);
+	this.residence.population.push(this);
+
 }

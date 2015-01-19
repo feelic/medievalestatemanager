@@ -1,5 +1,8 @@
-function Seasons (i) {
+function Seasons (i, year) {
 	
+	this.startYear = year;
+	this.currentYear = year;
+
 	this.seasonCounter = i;
 	this.seasonNames = ['Spring', 'Summer', 'Fall', 'Winter'];
 
@@ -9,6 +12,9 @@ function Seasons (i) {
 
 	this.nextSeason = function () {
 		this.seasonCounter++;
+
+		if (this.seasonCounter%4 == 0) this.currentYear++;
+
 		this.current = this.seasonNames[this.seasonCounter%4];
 	};
 
@@ -17,7 +23,7 @@ function Seasons (i) {
 	};
 
 	this.getWeatherReport = function () {
-		var w = '<div>'+this.current+'</div>';
+		var w = '<div>'+this.current+' '+this.currentYear+'</div>';
 		w += '<div>humidity : '+this.weather.humidity+'</div>';
 		w += '<div>rainfall : '+this.weather.rainfall+'</div>';
 		w += '<div>temperature : '+this.weather.temperature+'</div>';
