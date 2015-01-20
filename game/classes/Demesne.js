@@ -1,9 +1,12 @@
-function Demesne () {
+function Demesne (color) {
 
 	this.owner = null;
 	this.lord = null;
 	this.manor = null;
 	this.plots = [];
+
+	if (color) this.color = color;
+	else this.color = randomColor();
 
 
 	this.claimFreeLand = function (mode) {
@@ -15,13 +18,14 @@ function Demesne () {
 		
 		while( tovisit.length > 0) {
 			var p = game.getPlotById(tovisit.shift());
-			if (p.type == 'inhabited') {
+			if (p.biome != 'mountains' && p.biome != 'sea' && p.type == 'inhabited') {
 				this.plots.push(p);
 				if (mode) p.type = mode;
-				else p.type = getRandomInArray([ "tenure","tenure","tenure", "servile land","servile land","servile land", "city" ])
+				else p.type = getRandomInArray([ "tenure","tenure","tenure", "servile land","servile land","servile land", "city" ]);
+				p.demesne = this;
 				break;
 			}
-			else {
+			else if (p.demesne == this) {
 				visited.push(p.id);
 				var n = p.getNeighbours();
 				for (var i = 0; i < n.length; i++) {

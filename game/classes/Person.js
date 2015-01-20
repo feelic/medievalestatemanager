@@ -28,9 +28,13 @@ function Person (data) {
 		if ((this.spouse) && (this.spouse.alive) && this.sex == 'f' && this.age >= 16 && this.age <= 36 && ( this.children.length == 0 || this.children[this.children.length-1].age > 1 ) && this.children.length < 16 && !this.pregnant) {
 			var chances = 0.90 * (( 36 - this.age ) / 20);
 			if (randomBoolFromRate(chances)) {
-				
+
+				var alive = true;
+				// probability of stillbirth
+				if(randomBoolFromRate(0.25)) alive = false;
+
+				// We need to determine the social status of the child
 				var status = 'serf';
-				
 				
 				var s = ['m','f'];
 				var p = new Person({
@@ -38,13 +42,22 @@ function Person (data) {
 						'birthYear' : game.time.currentYear,
 						'sex' : s[Math.round(Math.random())],
 						'status' : status,
-						'residence' : this.residence
+						'residence' : this.residence,
+						'alive' : alive,
+						'health' : 72
 					});
 
 				this.children.push(p);
 				this.spouse.children.push(p);
 				p.setParents(this, this.spouse);
 
+				//probability of the mother dying in labour
+				if (this.health < 25 && randomBoolFromRate(1/4)) this.alive = false;
+				else if (this.health < 75 && randomBoolFromRate(1/6)) this.alive = false;
+				else if (randomBoolFromRate(1/8)) this.alive = false;
+
+				if ( this.alive == false ) console.log(this.getFullName()+' died in labour');
+				if (p.alive == false) console.log(p.getFullName()+' was dead at birth');
 				return p;
 				
 			}
@@ -54,12 +67,31 @@ function Person (data) {
 	};
 
 	/*
+	 * Check if the person dies or not :(
+	 */
+	this.mortality = function () {
+		this.age += 0.25;
+
+		if (!randomBoolFromRate((100+this.health)/200)) this.alive = false;
+		if (!this.alive) console.log(this.getFullName()+' died aged '+this.age+' (health : '+this.health+')');
+
+		if (this.age < 25) this.health = cap(this.health + 4, 100, 0);
+		else if (this.age < 30) this.health = cap(this.health + 2, 100, 0);
+		else if (this.age < 40) this.health = cap(this.health + 0, 100, 0);
+		else if (this.age < 45) this.health = cap(this.health - 0.5, 100, 0);
+		else if (this.age < 50) this.health = cap(this.health - 1, 100, 0);
+		else this.health = cap(this.health - 1.5, 100, 0);
+	}
+
+	/*
 	 *	Sets Parents
 	 */
 	this.setParents = function (parentA, parentB) {
 		this.parents = [];
 		this.parents.push(parentA);
 		this.parents.push(parentB);
+
+		if (!this.lastname) this.createName();
 	};
 
 	this.setResidence = function (r) {
@@ -73,7 +105,12 @@ function Person (data) {
 			this.lastname = this.parents[1].lastname;
 		}
 
-		this.name = game.localisation.getRandomName(this.sex);
+		if (! this.name ) this.name = game.localisation.getRandomName(this.sex);
+	}
+
+	this.getFullName = function () {
+		if(this.lastname) return this.name+' '+this.lastname;
+		else return this.name;
 	}
 
 	// CONSTRUCTEUR

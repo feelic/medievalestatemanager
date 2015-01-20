@@ -4,14 +4,23 @@ function Game (startmode) {
 	this.dateStart = Date.now();
 	this.demesnes = [];
 	this.plots = [];
+	this.landPlots = [];
 	this.people = [];
 
+	this.displayMode = 'geo';
 	/*
 	 * gets Game Container
 	 */
 	this.getUiContainer = function (debug) {
 
-		var c = '<div id="leftmenu"><div id="weatherbox">'+this.time.getWeatherReport()+'</div><div><a id="nextTurn" class="btn">next turn</a></div>';
+		var c = '<div id="leftmenu">';
+
+		// Map mode buttons
+		c += '<div><a id="geoMode" class="btn btn-action">G</a> <a id="politicalMode" class="btn btn-action">P</a></div>';
+
+		// Weather box & next turn button
+		c += '<div id="weatherbox">'+this.time.getWeatherReport()+'</div><div><a id="nextTurn" class="btn">next turn</a></div>';
+
 		if (debug) c += '<div style="float:left;" id="enginestatus"></div>';
 		c += '</div>';
 		c += '<div id="mappanel"><div id="canvas" ></div></div>';
@@ -26,6 +35,12 @@ function Game (startmode) {
 		this.engine.render();
 	};
 
+	this.changeDisplayMode = function (mode) {
+		console.log(mode)
+		this.displayMode = mode;
+		this.renderMap();
+	};
+
 	/*
 	 * Goes to the next turn
 	 */
@@ -33,9 +48,11 @@ function Game (startmode) {
 		this.time.nextSeason();
 		document.getElementById("weatherbox").innerHTML = this.time.getWeatherReport();
 		for (var i = 0; i < this.plots.length; i++ ) this.plots[i].seasonChange();
-		for (var i = 0; i < this.people.length; i++) this.people[i].age += 0.25;
 
 		if ( this.engine.selectedCell ) document.getElementById("rightpanel").innerHTML = this.engine.selectedCell.ownerObject.displayDetails();
+		var a = 0;
+		for (var i = 0; i < this.people.length;i++) if (this.people[i].alive) a++;
+		return (a+' alive of '+this.people.length+' total')
 	}
 
 	/*
@@ -77,6 +94,7 @@ function Game (startmode) {
 				p.type = 'inhabited';
 
 				that.plots.push(p);
+				if (p.height > 0) that.landPlots.push(p);
 			}
 			that.generateRandomSociety(size, maxPopulation);
 			that.renderMap();
@@ -90,12 +108,13 @@ function Game (startmode) {
 			var demesne = new Demesne ();
 			this.demesnes.push(demesne);
 
-			var plot = getRandomInArray(this.plots);
+			var plot = getRandomInArray(this.landPlots);
 			plot.type = 'manor';
 			plot.name = game.localisation.getRandomName('place');
 
 			demesne.manor = plot;
 			demesne.plots.push(plot);
+			plot.demesne = demesne;
 		}
 
 		// generate the lords & share the land between holdings
@@ -108,14 +127,14 @@ function Game (startmode) {
 
 			d.lord = lord;
 
-			var demesneSize = Math.floor(Math.random()*6);
+			var demesneSize = 2+ Math.floor(Math.random()*4);
 			for (var j = 0; j < demesneSize; j++) {
 				d.claimFreeLand();
 			}
 		}
 
-		for (var i = 0; i < this.plots.length; i++) {
-			var p = this.plots[i];
+		for (var i = 0; i < this.landPlots.length; i++) {
+			var p = this.landPlots[i];
 			p.addStartingPopulation(population);
 		}
 
@@ -137,5 +156,14 @@ function Game (startmode) {
 	document.getElementById("nextTurn").addEventListener("click", function( event ) {
 		that.nextTurn();
 	}, false);
+
+	document.getElementById("geoMode").addEventListener("click", function( event ) {
+		that.changeDisplayMode('geo');
+	}, false);
+
+	document.getElementById("politicalMode").addEventListener("click", function( event ) {
+		that.changeDisplayMode('political');
+	}, false);
+
 
 }

@@ -4,8 +4,16 @@ function Plot (cell) {
 	this.id = this.cell.id;
 	this.cell.ownerObject = this;
 
-	this.biomes = [ "forest", "moors", "plains", "coast", "hills", "arid" ];
-	this.biome = "";
+	this.height = this.cell.height;
+
+	this.biomes = [ "sea","forest", "moors", "plains", "coast", "hills", "arid" ];
+
+	if (this.height <= 0) this.biome = 'sea';
+	else if (game.engine.countCoasts(this.cell)>0 && this.height == 1) this.biome = 'coast';
+	else if (this.height == 1) this.biome = 'plains';
+	else if (this.height == 2) this.biome = 'moors';
+	else if (this.height == 3) this.biome = 'hills';
+	else if (this.height >= 4) this.biome = 'mountains';
 	
 	this.types = [ "manor", "city", "tenure", "servile land", "inhabited" ];
 	this.type = "";
@@ -30,6 +38,21 @@ function Plot (cell) {
 		"Cu" : 0,
 		"Ag" : 0,
 		"Au" : 0
+	};
+
+	this.diseases = {
+		"Plague" : {
+			"activeEpidemy" : false, 
+			"transmissionFactor" : 0.5,
+			"stages" : [-20],
+			"baseCureChance" : 0.2
+		},
+		"Leprosy" : {
+			"activeEpidemy" : false, 
+			"transmissionFactor" : 0.1,
+			"stages" : [-10, -5],
+			"baseCureChance" : 0.1
+		}
 	};
 
 	this.naturalRegrowth = function () {
@@ -100,8 +123,10 @@ function Plot (cell) {
 	this.seasonChange = function () {
 		if (this.cell.height >= 1 ) {
 			for (var i = 0; i < this.population.length; i++){
-				this.population[i].haveChild();
-				//this.population[i].die();
+				if (this.population[i].alive) {
+					this.population[i].mortality();
+					this.population[i].haveChild();
+				}
 			}
 
 			this.makeMariages();
@@ -159,8 +184,10 @@ function Plot (cell) {
 
 	this.displayDetails = function () {
 		var d = '<div>';
-		d += "<p>id: "+this.id+"</p>";
-		if (this.name) d += "<p>id: "+this.name+"</p>";
+		d += "<p>id: "+this.id+" ("+this.biome+")</p>";
+		if (this.name) d += "<p>name: "+this.name+"</p>";
+		if (this.demesne) d += "<p>part of the "+this.demesne.lord.lastname+" estate</p>";
+		d += "<p>height: "+this.height+"</p>";
 		d += "<p>area: "+this.surface+" ha</p>";
 		d += "<p>population: "+this.getPop()+"</p>";
 		d += "<p>forestation: "+this.forestation+" %</p>";
@@ -175,7 +202,7 @@ function Plot (cell) {
 	this.renderPopList = function (){
 		var p = '<ul>';
 		for(var i = 0; i < this.population.length; i++) {
-			p += '<li><a data-personid="'+this.population[i].id+'">'+this.population[i].name+'</a> ('+Math.floor(this.population[i].age)+')</li>';
+			p += '<li><a data-personid="'+this.population[i].id+'">'+this.population[i].getFullName()+'</a> ('+Math.floor(this.population[i].age)+')</li>';
 		}
 
 		p += '</ul>';
@@ -207,6 +234,16 @@ function Plot (cell) {
 
 				if ( Math.random() > (count/i + hfactor + tfactor) ) break;
 			}
+		}
+	}
+
+	this.getRenderingParameters = function () {
+
+		if ( game.displayMode == 'geo' ) {
+			if (this.biome == 'coast') return {'color' : '#F5DEB3' };
+		}
+		else if ( game.displayMode == 'political' ) {
+			if (this.demesne) return {'color' : this.demesne.color };
 		}
 	}
 }
