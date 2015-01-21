@@ -238,12 +238,28 @@ function Plot (cell) {
 	}
 
 	this.getRenderingParameters = function () {
+		var p = {style : {}, data : {}};
 
 		if ( game.displayMode == 'geo' ) {
-			if (this.biome == 'coast') return {'color' : '#F5DEB3' };
+			if (this.biome == 'coast') p.style.fill = '#F5DEB3';
 		}
 		else if ( game.displayMode == 'political' ) {
-			if (this.demesne) return {'color' : this.demesne.color };
+			if (this.demesne) p.style.fill = this.demesne.color;
 		}
+
+		if (this.type = 'manor') {
+			p.data.text = this.name;
+			p.style.text = {
+				'text-anchor': 'middle',
+				'font-size': 24,
+				'font-family': 'serif',
+				'fill': '#EEEEEE',
+				'stroke': '#666666',
+				'stroke-width': '1',
+				'letter-spacing': 1,
+				'word-spacing': 1
+			}
+		}
+		return p;
 	}
 }

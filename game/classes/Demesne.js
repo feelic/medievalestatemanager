@@ -21,7 +21,7 @@ function Demesne (color) {
 			if (p.biome != 'mountains' && p.biome != 'sea' && p.type == 'inhabited') {
 				this.plots.push(p);
 				if (mode) p.type = mode;
-				else p.type = getRandomInArray([ "tenure","tenure","tenure", "servile land","servile land","servile land", "city" ]);
+				else p.type = getRandomInArray([ "tenure","tenure","tenure","tenure","servile land","servile land","servile land","servile land","city" ]);
 				p.demesne = this;
 				break;
 			}

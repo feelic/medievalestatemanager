@@ -99,7 +99,7 @@ function Person (data) {
 	};
 
 	this.createName = function () {
-		if (this.status == 'nobility') this.lastname = game.localisation.gen +' '+ this.residence.name;
+		if (this.status == 'nobility') this.lastname = game.localisation.getGen(this.residence.name)+ this.residence.name;
 
 		if (this.parents && this.parents.length > 0) {
 			this.lastname = this.parents[1].lastname;

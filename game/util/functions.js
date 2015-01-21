@@ -19,3 +19,7 @@ function array_intersection(a, b) {
 
   return result;
 }
+
+function isVowel(c) {
+    return ['a','a', 'e','E', 'i', 'I', 'o', 'O', 'u','U', 'é', 'É', 'è', 'È'].indexOf(c) !== -1
+}

@@ -36,7 +36,7 @@ function Game (startmode) {
 	};
 
 	this.changeDisplayMode = function (mode) {
-		console.log(mode)
+		console.log(mode+' mapmode');
 		this.displayMode = mode;
 		this.renderMap();
 	};
@@ -110,7 +110,7 @@ function Game (startmode) {
 
 			var plot = getRandomInArray(this.landPlots);
 			plot.type = 'manor';
-			plot.name = game.localisation.getRandomName('place');
+			plot.name = game.localisation.getRandomPlaceName();
 
 			demesne.manor = plot;
 			demesne.plots.push(plot);
@@ -142,7 +142,7 @@ function Game (startmode) {
 
 	//default dev values 
 	if (startmode == 'dev') {
-		this.localisation = new Localisation('Brittany');
+		this.localisation = new Localisation('France');
 		that.player = new Player('human');
 
 		that.time = new Seasons(0, 963);
