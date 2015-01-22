@@ -46,14 +46,24 @@ function Game (startmode) {
 	 */
 	this.nextTurn = function () {
 		this.time.nextSeason();
+		this.census();
 		document.getElementById("weatherbox").innerHTML = this.time.getWeatherReport();
-		for (var i = 0; i < this.plots.length; i++ ) this.plots[i].seasonChange();
+		for (var i = 0; i < this.plots.length; i++ ) {
+
+			this.plots[i].seasonChange();
+		}
 
 		if ( this.engine.selectedCell ) document.getElementById("rightpanel").innerHTML = this.engine.selectedCell.ownerObject.displayDetails();
-		var a = 0;
-		for (var i = 0; i < this.people.length;i++) if (this.people[i].alive) a++;
-		return (a+' alive of '+this.people.length+' total')
 	}
+
+	/*
+	 * Auto passes turns (years*4)
+	 */
+	this.fastForward = function(years) {
+		for(var i = 0; i < years*4; i++) {
+			this.nextTurn();
+		}
+	};
 
 	/*
 	 * Cell events listeners

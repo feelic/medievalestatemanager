@@ -31,22 +31,24 @@ function Localisation (locale) {
 			mSt : 'Saint',
 			fSt : 'Sainte',
 			places : [
+				"Ambly", "Auquaires",
 				"Beaulieu", "Bréant", 
 				"Chaumont", "Colonnet",
-				"Dimon", 
-				"Eminnes",
+				"Dimon", "Doumettes",
+				"Eminnes", "Effreux",
 				"Faix", "Fougnons",
-				"Grillères", 
-				"Haguemur",
+				"Grillères", "Goulin",
+				"Haguemur", "Hauteterre",
 				"Jannois", 'Junières',
 				"Lilouet", 'Lambier',
 		 		"Millier", "Morlan",
 				"Nanderolles", "Nerleux",
+				"Omblé", "Ortenont",
 				"Ponleu", "Palagu",
 				"Rengain", "Reuteaux",
 				"Sange", "Serlandes",
-				"Tolence",
-				"Vaux",
+				"Tolence", "Tally",
+				"Vaux", "Vermy"
 			]
 		}
 	};

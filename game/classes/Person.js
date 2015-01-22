@@ -25,13 +25,9 @@ function Person (data) {
 	 * Returns false or a New Child entity
 	 */
 	this.haveChild = function () {
-		if ((this.spouse) && (this.spouse.alive) && this.sex == 'f' && this.age >= 16 && this.age <= 36 && ( this.children.length == 0 || this.children[this.children.length-1].age > 1 ) && this.children.length < 16 && !this.pregnant) {
-			var chances = 0.90 * (( 36 - this.age ) / 20);
+		if ((this.spouse) && (this.spouse.alive) && this.sex == 'f' && this.age >= 15 && this.age <= 45 && ( this.children.length == 0 || this.children[this.children.length-1].age > 1.25 ) && this.children.length < 16 && !this.pregnant) {
+			var chances = 0.72 * (( 45 - this.age ) / 30);
 			if (randomBoolFromRate(chances)) {
-
-				var alive = true;
-				// probability of stillbirth
-				if(randomBoolFromRate(0.25)) alive = false;
 
 				// We need to determine the social status of the child
 				var status = 'serf';
@@ -43,23 +39,26 @@ function Person (data) {
 						'sex' : s[Math.round(Math.random())],
 						'status' : status,
 						'residence' : this.residence,
-						'alive' : alive,
+						'alive' : true,
 						'health' : 72
 					});
+
+				// probability of stillbirth
+				if(randomBoolFromRate(0.25)) p.kill('was dead at birth');
 
 				this.children.push(p);
 				this.spouse.children.push(p);
 				p.setParents(this, this.spouse);
 
 				//probability of the mother dying in labour
-				if (this.health < 25 && randomBoolFromRate(1/4)) this.alive = false;
-				else if (this.health < 75 && randomBoolFromRate(1/6)) this.alive = false;
-				else if (randomBoolFromRate(1/8)) this.alive = false;
+				if (this.health < 25 && randomBoolFromRate(1/4)) this.kill('died in labour');
+				else if (this.health < 75 && randomBoolFromRate(1/6)) this.kill('died in labour');
+				else if (randomBoolFromRate(1/8)) this.kill('died in labour');
 
-				if ( this.alive == false ) console.log(this.getFullName()+' died in labour');
-				if (p.alive == false) console.log(p.getFullName()+' was dead at birth');
+				game.time.log.births++;
+
 				return p;
-				
+
 			}
 			else return false;
 		}
@@ -71,17 +70,30 @@ function Person (data) {
 	 */
 	this.mortality = function () {
 		this.age += 0.25;
+		var cod = 'unknown';
 
-		if (!randomBoolFromRate((100+this.health)/200)) this.alive = false;
-		if (!this.alive) console.log(this.getFullName()+' died aged '+this.age+' (health : '+this.health+')');
+		if (this.age < 2) cod = 'died in the craddle';
 
-		if (this.age < 25) this.health = cap(this.health + 4, 100, 0);
+		if (this.age < 25) this.health = cap(this.health + 5, 100, 0);
 		else if (this.age < 30) this.health = cap(this.health + 2, 100, 0);
-		else if (this.age < 40) this.health = cap(this.health + 0, 100, 0);
-		else if (this.age < 45) this.health = cap(this.health - 0.5, 100, 0);
-		else if (this.age < 50) this.health = cap(this.health - 1, 100, 0);
-		else this.health = cap(this.health - 1.5, 100, 0);
-	}
+		else if (this.age < 40) this.health = cap(this.health + 1, 100, 0);
+		else if (this.age < 45) this.health = cap(this.health + 0, 100, 0);
+		else if (this.age < 50) this.health = cap(this.health - 0.5, 100, 0);
+		else this.health = cap(this.health - 1, 100, 0);
+
+		if (!randomBoolFromRate((100+this.health)/200)) this.kill(cod);
+
+	};
+
+	/*
+	 * Kills the person, adds the cause and logs the death in the game history
+	 */
+	this.kill = function (cause) {
+		this.alive = false;
+		this.causeOfDeath = cause;
+		game.time.log.deaths++;
+		game.time.log.agesOfDeath.push(this.age);
+	};
 
 	/*
 	 *	Sets Parents

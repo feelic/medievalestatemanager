@@ -1,4 +1,4 @@
-function Seasons (i, year) {
+function Seasons (i, year, history) {
 	
 	this.startYear = year;
 	this.currentYear = year;
@@ -10,12 +10,19 @@ function Seasons (i, year) {
 
 	this.current = this.seasonNames[i%4];
 
+	if (history) this.history = history;
+	else this.history = [];
+
 	this.nextSeason = function () {
 		this.seasonCounter++;
 
 		if (this.seasonCounter%4 == 0) this.currentYear++;
 
 		this.current = this.seasonNames[this.seasonCounter%4];
+
+
+		this.history.push(this.log);
+		this.log = this.getBlankLog();
 	};
 
 	this.getSeasonName = function (i) {
@@ -29,4 +36,17 @@ function Seasons (i, year) {
 		w += '<div>temperature : '+this.weather.temperature+'</div>';
 		return w;
 	};
+
+	this.getBlankLog = function () {
+		return {
+			deaths : 0,
+			agesOfDeath : [],
+			births : 0,
+			marriages : 0,
+			ages : [],
+			alivePopulation : 0,
+		};
+	};
+
+	this.log = this.getBlankLog();
 }

@@ -23,3 +23,22 @@ function array_intersection(a, b) {
 function isVowel(c) {
     return ['a','a', 'e','E', 'i', 'I', 'o', 'O', 'u','U', 'é', 'É', 'è', 'È'].indexOf(c) !== -1
 }
+
+function average(array) {
+	var sum = 0;
+	for( var i = 0; i < array.length; i++ ){
+		sum += parseInt( array[i], 10 ); //don't forget to add the base
+	}
+
+	if (sum > 0) return avg = sum/array.length;
+	else return 0;
+}
+
+function sum(array) {
+	var sum = 0;
+	for( var i = 0; i < array.length; i++ ){
+		sum += parseInt( array[i], 10 ); 
+	}
+
+	return sum;
+}

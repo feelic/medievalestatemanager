@@ -105,18 +105,20 @@ function Plot (cell) {
 	};
 
 	this.getPop = function () {
+		//console.log(this.population.length);
 		return this.population.length;
 	};
 
 	this.getPopDensity = function () {
-		if (this.getPop() == 0) return 0
-		else return this.surface / this.getPop();
+		var d = 0;
+		if (!this.getPop() === 0) d = this.surface / this.getPop();
+		return d;
 	};
 
 	this.getPopDensityBracket = function () {
 		var d = this.getPopDensity();
-		if (d > 20) return 'high';
-		else if (d > 10) return 'medium';
+		if (d > 2000) return 'high';
+		else if (d > 1000) return 'medium';
 		else return 'low';
 	};
 	
@@ -157,6 +159,7 @@ function Plot (cell) {
 			if ( this.isItAMatch(p1,p2) ) {
 				p1.spouse = p2;
 				p2.spouse = p1;
+				game.time.log.marriages++;
 				mSingles.splice[mSingles.indexOf(p1),1];
 				fSingles.splice[fSingles.indexOf(p2),1];
 			}
@@ -241,10 +244,13 @@ function Plot (cell) {
 		var p = {style : {}, data : {}};
 
 		if ( game.displayMode == 'geo' ) {
-			if (this.biome == 'coast') p.style.fill = '#F5DEB3';
+			//if (this.biome == 'coast') p.style.fill = '#F5DEB3';
 		}
 		else if ( game.displayMode == 'political' ) {
-			if (this.demesne) p.style.fill = this.demesne.color;
+			if (this.demesne) {
+				p.style.fill = this.demesne.color;
+			}
+			else if (this.biome != 'sea') p.style.fill = '#AAAAAA';
 		}
 
 		if (this.type = 'manor') {
@@ -253,7 +259,7 @@ function Plot (cell) {
 				'text-anchor': 'middle',
 				'font-size': 24,
 				'font-family': 'serif',
-				'fill': '#EEEEEE',
+				'fill': '#333333',
 				'stroke': '#666666',
 				'stroke-width': '1',
 				'letter-spacing': 1,
