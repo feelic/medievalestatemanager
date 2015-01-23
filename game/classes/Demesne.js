@@ -1,12 +1,12 @@
-function Demesne (color) {
+function Demesne (colorPalette) {
 
 	this.owner = null;
 	this.lord = null;
 	this.manor = null;
 	this.plots = [];
 
-	if (color) this.color = color;
-	else this.color = randomColor();
+	if (colorPalette) this.palette = colorPalette;
+	else this.palette = game.getColorPalette();
 
 
 	this.claimFreeLand = function (mode) {

@@ -8,13 +8,13 @@ function Person (data) {
 	this.sex = 'm';
 	this.health = 100;
 	this.alive = true;
+	this.sick = false;
 
 	this.job = null;
 	this.residence = null;
 
 	this.craft = null;
 	this.level = null;
-	this.levels = ["apprentice", "journeyman", "master"];
 
 	this.parents = [];
 	this.spouse = null;
@@ -72,6 +72,10 @@ function Person (data) {
 		this.age += 0.25;
 		var cod = 'unknown';
 
+		if (this.sick) {
+			cod = 'died of the '+this.sick.disease;
+			this.updateSickness();
+		}
 		if (this.age < 2) cod = 'died in the craddle';
 
 		if (this.age < 25) this.health = cap(this.health + 5, 100, 0);
@@ -85,6 +89,22 @@ function Person (data) {
 
 	};
 
+	this.updateSickness = function (d) {
+		//new disease
+		if (d) {
+			this.sick = { 'disease' : d, 'stage' : 0 };
+		}
+		else if (this.sick) {
+			// Cured !
+			if (getBoolFromRate(game.disease[this.sick.disease].baseCureChance+this.residence.healthCareBonus)) {
+				this.sick = false;
+			}
+			else {
+				this.health += game.diseases[this.sick.disease].stages[this.sick.stage];
+				this.sick.stage = cap(this.sick.stage + 1, game.diseases[this.sick.disease].stages.length - 1,0);
+			}
+		}
+	}
 	/*
 	 * Kills the person, adds the cause and logs the death in the game history
 	 */

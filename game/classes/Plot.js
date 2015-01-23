@@ -6,8 +6,6 @@ function Plot (cell) {
 
 	this.height = this.cell.height;
 
-	this.biomes = [ "sea","forest", "moors", "plains", "coast", "hills", "arid" ];
-
 	if (this.height <= 0) this.biome = 'sea';
 	else if (game.engine.countCoasts(this.cell)>0 && this.height == 1) this.biome = 'coast';
 	else if (this.height == 1) this.biome = 'plains';
@@ -15,7 +13,6 @@ function Plot (cell) {
 	else if (this.height == 3) this.biome = 'hills';
 	else if (this.height >= 4) this.biome = 'mountains';
 	
-	this.types = [ "manor", "city", "tenure", "servile land", "inhabited" ];
 	this.type = "";
 
 	this.surface = Math.abs(Math.round(this.cell.getArea()));
@@ -25,9 +22,9 @@ function Plot (cell) {
 	this.plot = null;
 	this.population = [];
 
+	this.currentEpidemy = null;
 	this.buildings = [];
 
-	this.exploitationTypes = ["agriculture", "herding", "foresting", "quarry", "mining"] ;
 	this.exploitationType = "";
 
 	this.soilQuality = 100;
@@ -38,21 +35,6 @@ function Plot (cell) {
 		"Cu" : 0,
 		"Ag" : 0,
 		"Au" : 0
-	};
-
-	this.diseases = {
-		"Plague" : {
-			"activeEpidemy" : false, 
-			"transmissionFactor" : 0.5,
-			"stages" : [-20],
-			"baseCureChance" : 0.2
-		},
-		"Leprosy" : {
-			"activeEpidemy" : false, 
-			"transmissionFactor" : 0.1,
-			"stages" : [-10, -5],
-			"baseCureChance" : 0.1
-		}
 	};
 
 	this.naturalRegrowth = function () {
@@ -248,24 +230,38 @@ function Plot (cell) {
 		}
 		else if ( game.displayMode == 'political' ) {
 			if (this.demesne) {
-				p.style.fill = this.demesne.color;
+				p.style.fill = this.demesne.palette.primary;
 			}
 			else if (this.biome != 'sea') p.style.fill = '#AAAAAA';
 		}
 
-		if (this.type = 'manor') {
+		if (this.type == 'manor') {
 			p.data.text = this.name;
 			p.style.text = {
 				'text-anchor': 'middle',
 				'font-size': 24,
 				'font-family': 'serif',
-				'fill': '#333333',
-				'stroke': '#666666',
+				'fill': this.demesne.palette.complementary,
+				'stroke': this.demesne.palette.secondary,
 				'stroke-width': '1',
 				'letter-spacing': 1,
 				'word-spacing': 1
 			}
 		}
+		if ( this.demesne ) {
+			p.style.borders = {};
+			for (var i = 0; i < this.cell.neighbours.length; i++) {
+				if(this.demesne != game.getPlotById(this.cell.neighbours[i]).demesne) {
+					p.style.borders[this.cell.neighbours[i]] = {		
+														'stroke': '#333333',
+														'stroke-width': 2,
+														'stroke-linejoin': 'round',
+														'stroke-dasharray': '-', //[“”, “-”, “.”, “-.”, “-..”, “. ”, “- ”, “--”, “- .”, “--.”, “--..”]}
+													};
+				}
+			}
+		}
+
 		return p;
 	}
 }

@@ -1,6 +1,7 @@
 function Game (startmode) {
 
 	var that = this;
+
 	this.dateStart = Date.now();
 	this.demesnes = [];
 	this.plots = [];
@@ -8,6 +9,7 @@ function Game (startmode) {
 	this.people = [];
 
 	this.displayMode = 'geo';
+
 	/*
 	 * gets Game Container
 	 */
@@ -175,5 +177,8 @@ function Game (startmode) {
 		that.changeDisplayMode('political');
 	}, false);
 
-
 }
+Game.version = '1.0';
+Game.toString = function () {
+	return 'Medieval Estate Manager 2015 v '+this.version;
+};
