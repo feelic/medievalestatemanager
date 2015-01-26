@@ -57,3 +57,17 @@ body {
 	padding:0;
 	min-width:0;
 }
+
+.person-link {
+	cursor:pointer;
+	color:#222;
+}
+.person-link:hover {
+	color:#444;
+}
+.person-link.dead {
+	color:#888;
+}
+.person-link.dead:hover {
+	color:#AAA;
+}

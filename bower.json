@@ -7,7 +7,8 @@
     "**/*.txt"
   ],
   "dependencies": {
-    "PtolemyJS" : "https://github.com/feelic/PtolemyJS.git"
+    "PtolemyJS" : "https://github.com/feelic/PtolemyJS.git",
+	"jQuery" : "~2.1"
   },
   "devDependencies": {}
 }

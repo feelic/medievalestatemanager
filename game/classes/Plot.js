@@ -127,8 +127,8 @@ function Plot (cell) {
 		var fSingles = [];
 		
 		for (var i = 0; i < this.population.length; i++){
-			if ( this.population[i].age >= 16 && (!this.population[i].spouse || !this.population[i].spouse.alive) ) {
-				if (this.population[i].sex == 'f') fSingles.push(this.population[i]);
+			if ( this.population[i].isAliveMajorAndSingle() ) {
+				if (this.population[i].sex == 'f' && this.population[i].age < 36 ) fSingles.push(this.population[i]);
 				else mSingles.push(this.population[i]);
 			}
 		}
@@ -154,7 +154,7 @@ function Plot (cell) {
 	}
 
 	this.isItAMatch = function (p1, p2) {
-		if ((!p1.spouse || !p1.spouse.alive) && (!p2.spouse || !p2.spouse.alive) && p1.age > 16 && p2.age > 16 && p1.sex != p2.sex && array_intersection(p1.parents, p2.parents).length === 0) return true // it's a match !
+		if (p1.isAliveMajorAndSingle() && p2.isAliveMajorAndSingle() && p1.sex != p2.sex && array_intersection(p1.parents, p2.parents).length === 0) return true // it's a match !
 		else return false;
 	}
 
@@ -178,19 +178,27 @@ function Plot (cell) {
 		d += "<p>forestation: "+this.forestation+" %</p>";
 		d += "<p>soil quality: "+this.soilQuality+" %</p>";
 		d += "</div>";
-		d += '<div';
+		d += '<div>';
 		d += this.renderPopList();
 		d += "</div>";
 		return d;
 	}
 
 	this.renderPopList = function (){
-		var p = '<ul>';
+		var p = '<table>';
 		for(var i = 0; i < this.population.length; i++) {
-			p += '<li><a data-personid="'+this.population[i].id+'">'+this.population[i].getFullName()+'</a> ('+Math.floor(this.population[i].age)+')</li>';
+			p += '<tr>';
+			p += '<td>'+this.population[i].renderLink()+'</td>';
+			p += '<td>('+Math.floor(this.population[i].age)+')</td>';
+			p += '<td>';
+			if(this.population[i].spouse && this.population[i].spouse.alive) p += 'm';
+			else if (this.population[i].spouse) p += 'w';
+			p += '</td>';
+			p += '</tr>';
+			
 		}
 
-		p += '</ul>';
+		p += '</table>';
 
 		return p;
 	}
@@ -223,7 +231,7 @@ function Plot (cell) {
 	}
 
 	this.getRenderingParameters = function () {
-		var p = {style : {}, data : {}};
+		var p = {style : {  }, data : {}};
 
 		if ( game.displayMode == 'geo' ) {
 			//if (this.biome == 'coast') p.style.fill = '#F5DEB3';
@@ -248,8 +256,9 @@ function Plot (cell) {
 				'word-spacing': 1
 			}
 		}
-		if ( this.demesne ) {
-			p.style.borders = {};
+		p.style.borders = {};
+		//if ( this.demesne ) {
+
 			for (var i = 0; i < this.cell.neighbours.length; i++) {
 				if(this.demesne != game.getPlotById(this.cell.neighbours[i]).demesne) {
 					p.style.borders[this.cell.neighbours[i]] = {		
@@ -260,7 +269,7 @@ function Plot (cell) {
 													};
 				}
 			}
-		}
+		//}
 
 		return p;
 	}

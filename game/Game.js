@@ -55,7 +55,7 @@ function Game (startmode) {
 			this.plots[i].seasonChange();
 		}
 
-		if ( this.engine.selectedCell ) document.getElementById("rightpanel").innerHTML = this.engine.selectedCell.ownerObject.displayDetails();
+		//if ( this.getCurrentSelection() ) document.getElementById("rightpanel").innerHTML = this.engine.selectedCell.ownerObject.displayDetails();
 	}
 
 	/*
@@ -88,6 +88,13 @@ function Game (startmode) {
 			}
 		}
 	}
+	this.getPersonById = function (id) {
+		for (var i = 0; i < this.people.length; i++) {
+			if (this.people[i].id == id) {
+				return this.people[i];
+			}
+		}
+	}
 
 	this.generateRandomWorld = function (size, maxPopulation) {
 		var that = this;
@@ -116,7 +123,8 @@ function Game (startmode) {
 	this.generateRandomSociety = function (size, population) {
 
 		// generate manors to rule over the peasants
-		for (var i = 0; i < size/30; i++) {
+		//for (var i = 0; i < size/30; i++) {
+		for (var i = 0; i < 1; i++) {
 			var demesne = new Demesne ();
 			this.demesnes.push(demesne);
 
@@ -177,6 +185,10 @@ function Game (startmode) {
 		that.changeDisplayMode('political');
 	}, false);
 
+	$(document).on('click', '.person-link', function() {
+		var p = that.getPersonById($(this).attr('data-personid'));
+		$('#rightpanel').html(p.renderDetails());
+	});
 }
 Game.version = '1.0';
 Game.toString = function () {

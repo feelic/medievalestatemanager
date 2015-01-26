@@ -26,7 +26,7 @@ function Person (data) {
 	 */
 	this.haveChild = function () {
 		if ((this.spouse) && (this.spouse.alive) && this.sex == 'f' && this.age >= 15 && this.age <= 45 && ( this.children.length == 0 || this.children[this.children.length-1].age > 1.25 ) && this.children.length < 16 && !this.pregnant) {
-			var chances = 0.72 * (( 45 - this.age ) / 30);
+			var chances = 0.9 * (( 45 - this.age ) / 30);
 			if (randomBoolFromRate(chances)) {
 
 				// We need to determine the social status of the child
@@ -51,9 +51,9 @@ function Person (data) {
 				p.setParents(this, this.spouse);
 
 				//probability of the mother dying in labour
-				if (this.health < 25 && randomBoolFromRate(1/4)) this.kill('died in labour');
-				else if (this.health < 75 && randomBoolFromRate(1/6)) this.kill('died in labour');
-				else if (randomBoolFromRate(1/8)) this.kill('died in labour');
+				if (this.health < 25 && randomBoolFromRate(1/6)) this.kill('died in labour');
+				else if (this.health < 75 && randomBoolFromRate(1/8)) this.kill('died in labour');
+				else if (randomBoolFromRate(1/10)) this.kill('died in labour');
 
 				game.time.log.births++;
 
@@ -143,6 +143,62 @@ function Person (data) {
 	this.getFullName = function () {
 		if(this.lastname) return this.name+' '+this.lastname;
 		else return this.name;
+	}
+
+	this.isAliveMajorAndSingle = function () {
+		// is not dead
+		if (!this.alive) return false;
+		// too young to marry
+		else if(this.age < 15) return false;
+		// married and spouse is alive
+		else if(this.spouse && this.spouse.alive) return false;
+		else return true;
+	}
+
+	this.renderDetails = function () {
+		var d = '<div>';
+		d += '<p>'+this.renderLink()+' ('+Math.floor(this.age)+', '+this.sex+')</p>';
+
+		if (!this.alive) d += '<p>'+this.causeOfDeath+'</p>';
+
+		//parents
+		if (this.parents.length == 2) {
+			d += '<p>';
+			if (this.sex == 'm') d+= 'son of ';
+			else d += 'daughter of ';
+
+			d += this.parents[0].renderLink()+' and '+this.parents[1].renderLink()+'</p>';
+		}
+		//spouse
+		if (this.spouse) {
+			d += '<p>married to '+this.spouse.renderLink()+'</p>';
+		}
+
+		// children
+		d += '<table>';
+		for(var i = 0; i < this.children.length; i++) {
+			d += '<tr><td>'+this.children[i].renderLink()+'</td>';
+			d += '<td>('+Math.floor(this.children[i].age)+')</td>';
+			d += '<td>';
+			if(this.children[i].spouse && this.children[i].spouse.alive) d += 'm';
+			else if (this.children[i].spouse) d += 'w';
+			d += '</td>';
+			d += '</tr>';
+			
+		}
+
+		d += '</table></div>';
+
+		return d;
+	}
+
+	this.renderLink = function () {
+		var l = '<a class="person-link ';
+		if (!this.alive) l += 'dead';
+		l += '" data-personid="'+this.id+'">';
+		l += this.getFullName();
+		l += '</a>';
+		return l;
 	}
 
 	// CONSTRUCTEUR

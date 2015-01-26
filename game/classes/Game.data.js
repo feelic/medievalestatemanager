@@ -58,6 +58,26 @@ Game.prototype.colorPalettes = [
 		"primary" : "#4FE248",
 		"secondary" : "#8CDC88",
 		"complementary" : "#3B5C39"
+	},
+	{
+		"primary" : "#e07628",
+		"secondary" : "#edb892",
+		"complementary" : "#b56123"
+	},
+	{
+		"primary" : "#b21be3",
+		"secondary" : "#c983e0",
+		"complementary" : "#510393"
+	},
+	{
+		"primary" : "#d5c154",
+		"secondary" : "#ede7c9",
+		"complementary" : "#77670e"
+	},
+	{
+		"primary" : "#e5c150",
+		"secondary" : "#fde7c0",
+		"complementary" : "#976700"
 	}
 ];
 Game.prototype.getColorPalette = function () {

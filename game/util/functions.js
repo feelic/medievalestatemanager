@@ -21,7 +21,7 @@ function array_intersection(a, b) {
 }
 
 function isVowel(c) {
-    return ['a','a', 'e','E', 'i', 'I', 'o', 'O', 'u','U', 'é', 'É', 'è', 'È'].indexOf(c) !== -1
+    return ['a','A', 'e','E', 'i', 'I', 'o', 'O', 'u','U', 'y', 'Y', 'é', 'É', 'è', 'È'].indexOf(c) !== -1
 }
 
 function average(array) {
