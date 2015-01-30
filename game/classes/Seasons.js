@@ -20,7 +20,6 @@ function Seasons (i, year, history) {
 
 		this.current = this.seasonNames[this.seasonCounter%4];
 
-
 		this.history.push(this.log);
 		this.log = this.getBlankLog();
 	};

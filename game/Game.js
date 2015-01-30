@@ -62,9 +62,11 @@ function Game (startmode) {
 	 * Auto passes turns (years*4)
 	 */
 	this.fastForward = function(years) {
+		console.time('Fast forwarding game '+years+' years');
 		for(var i = 0; i < years*4; i++) {
 			this.nextTurn();
 		}
+		console.timeEnd('Fast forwarding game '+years+' years');
 	};
 
 	/*

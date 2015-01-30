@@ -9,6 +9,7 @@ function Person (data) {
 	this.health = 100;
 	this.alive = true;
 	this.sick = false;
+	this.hunger = 0; // 0 is fully fed, 10 is dying of starvation
 
 	this.job = null;
 	this.residence = null;
@@ -25,7 +26,7 @@ function Person (data) {
 	 * Returns false or a New Child entity
 	 */
 	this.haveChild = function () {
-		if ((this.spouse) && (this.spouse.alive) && this.sex == 'f' && this.age >= 15 && this.age <= 45 && ( this.children.length == 0 || this.children[this.children.length-1].age > 1.25 ) && this.children.length < 16 && !this.pregnant) {
+		if ((this.spouse) && (this.spouse.alive) && this.sex == 'f' && this.age >= 15 && this.age <= 45 && ( this.children.length == 0 || this.children[this.children.length-1].wasBornNSeasonsAgo(1.25) ) && this.children.length < 16 && !this.pregnant) {
 			var chances = 0.9 * (( 45 - this.age ) / 30);
 			if (randomBoolFromRate(chances)) {
 
@@ -64,6 +65,10 @@ function Person (data) {
 		}
 		else return false;
 	};
+
+	this.wasBornNSeasonsAgo = function (n) {
+		return (game.time.seasonCounter - this.birthDate >= n );
+	}
 
 	/*
 	 * Check if the person dies or not :(
@@ -138,12 +143,12 @@ function Person (data) {
 		}
 
 		if (! this.name ) this.name = game.localisation.getRandomName(this.sex);
-	}
+	};
 
 	this.getFullName = function () {
 		if(this.lastname) return this.name+' '+this.lastname;
 		else return this.name;
-	}
+	};
 
 	this.isAliveMajorAndSingle = function () {
 		// is not dead
@@ -153,7 +158,38 @@ function Person (data) {
 		// married and spouse is alive
 		else if(this.spouse && this.spouse.alive) return false;
 		else return true;
-	}
+	};
+
+	this.testMigration = function () {	
+		var migChance = 0;
+
+		//if adult and unmarried
+		if(this.isAliveMajorAndSingle()) migChance += 0.1;		
+
+		//if adult without a job
+		if(!this.employment) migChance += 0.1;
+
+		//if hungry
+		migChance += this.hunger/10;
+
+		if(randomBoolFromRate(migChance)) this.migrate();
+	};
+
+	this.migrate = function (destination) {
+		if (!destination) {
+			//if no destination is set, we have to find one randomly
+			destination = getRandomFromArray(this.residence.getNeighbours());
+		}
+		//if the person migrates, they go with their family (spouse and young children)
+		if(this.spouse && this.spouse.alive) {
+			this.spouse.migrate(destination);
+		}
+		for (var i = 0; i < this.children.length; i++) {
+			if (this.children[i].alive && this.children.age < 15) this.children[i].migrate(destination);
+		}
+
+		// TODO actual residence change 
+	};
 
 	this.renderDetails = function () {
 		var d = '<div>';
@@ -190,7 +226,7 @@ function Person (data) {
 		d += '</table></div>';
 
 		return d;
-	}
+	};
 
 	this.renderLink = function () {
 		var l = '<a class="person-link ';
@@ -199,7 +235,7 @@ function Person (data) {
 		l += this.getFullName();
 		l += '</a>';
 		return l;
-	}
+	};
 
 	// CONSTRUCTEUR
 	if (data) {

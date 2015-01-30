@@ -26,13 +26,15 @@ Game.prototype.getAvgAgeOfDeath = function () {
  * Logs demographic data to the console
  */
 Game.prototype.logDemographicData = function () {
-	console.log(game.time.current+' '+game.time.currentYear+', '+(game.time.currentYear - game.time.startYear)+' years since the game started');
-	console.log('total population: '+game.time.log.alivePopulation);
-	console.log('average age: '+average(game.time.log.ages));
-	console.log('marriages: '+game.time.log.marriages);
-	console.log('births: '+game.time.log.births);
-	console.log('deaths: '+game.time.log.deaths);
-	console.log('average age of death (all time): '+this.getAvgAgeOfDeath());
+	console.group('Demographic data : '+game.time.current+' '+game.time.currentYear);
+		console.log((game.time.currentYear - game.time.startYear)+' years since the game started');
+		console.log('total population: '+game.time.log.alivePopulation);
+		console.log('average age: '+average(game.time.log.ages));
+		console.log('marriages: '+game.time.log.marriages);
+		console.log('births: '+game.time.log.births);
+		console.log('deaths: '+game.time.log.deaths);
+		console.log('average age of death (all time): '+this.getAvgAgeOfDeath());
+	console.groupEnd();
 };
 
 
