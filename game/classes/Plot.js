@@ -114,7 +114,11 @@ function Plot (cell) {
 			}
 
 			this.makeMariages();
-
+			for (var i = 0; i < this.population.length; i++){
+				if (this.population[i].alive) {
+					this.population[i].testMigration();
+				}
+			}
 			this.naturalRegrowth();
 		}
 		else {
@@ -205,7 +209,18 @@ function Plot (cell) {
 
 	this.getNeighbours = function () {
 		return this.cell.neighbours;
-	}
+	};
+
+	this.getRandomLandNeighbour = function () {
+		var n = shuffle(this.getNeighbours());
+		var found = false;
+
+		for(var i = 0; i < n.length; i++) {
+			var p = game.getPlotById(n[i]);
+			if (p.height >= 1) return p;
+		}
+		throw new Error ('Couln\'t find any neighbour land plot for plot with id '+this.id);
+	};
 
 	this.addStartingPopulation = function (count) {
 		if (this.cell.height >= 1 && this.type != 'inhabited') {
@@ -228,7 +243,7 @@ function Plot (cell) {
 				if ( Math.random() > (count/i + hfactor + tfactor) ) break;
 			}
 		}
-	}
+	};
 
 	this.getRenderingParameters = function () {
 		var p = {style : {  }, data : {}};
@@ -272,5 +287,10 @@ function Plot (cell) {
 		//}
 
 		return p;
-	}
+	};
+
+	this.getName = function () {
+		if (this.name) return this.name;
+		else return this.biome+' '+this.id;
+	};
 }

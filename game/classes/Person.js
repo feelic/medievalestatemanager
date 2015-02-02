@@ -4,12 +4,14 @@ function Person (data) {
 
 	this.birthDate = null; //Saison de naissance
 	this.birthYear = null; //Année de naissance
+	this.placeOfBirth = null;
 	this.age = 0;
 	this.sex = 'm';
 	this.health = 100;
 	this.alive = true;
 	this.sick = false;
 	this.hunger = 0; // 0 is fully fed, 10 is dying of starvation
+	this.migrations = 0;
 
 	this.job = null;
 	this.residence = null;
@@ -26,7 +28,7 @@ function Person (data) {
 	 * Returns false or a New Child entity
 	 */
 	this.haveChild = function () {
-		if ((this.spouse) && (this.spouse.alive) && this.sex == 'f' && this.age >= 15 && this.age <= 45 && ( this.children.length == 0 || this.children[this.children.length-1].wasBornNSeasonsAgo(1.25) ) && this.children.length < 16 && !this.pregnant) {
+		if ((this.spouse) && (this.spouse.alive) && this.sex == 'f' && this.age >= 15 && this.age <= 45 && ( this.children.length == 0 || this.children[this.children.length-1].wasBornNSeasonsAgo(5) ) && this.children.length < 16 && !this.pregnant) {
 			var chances = 0.9 * (( 45 - this.age ) / 30);
 			if (randomBoolFromRate(chances)) {
 
@@ -37,6 +39,7 @@ function Person (data) {
 				var p = new Person({
 						'birthDate' : game.time.seasonCounter,
 						'birthYear' : game.time.currentYear,
+						'placeOfBirth' : this.residence,
 						'sex' : s[Math.round(Math.random())],
 						'status' : status,
 						'residence' : this.residence,
@@ -161,39 +164,54 @@ function Person (data) {
 	};
 
 	this.testMigration = function () {	
-		var migChance = 0;
+		if(!this.migrated || this.migrated+2 < game.time.seasonCounter) {
+			var migChance = 0;
+			//if adult and unmarried
+			if(this.isAliveMajorAndSingle()) migChance += 0.1;		
 
-		//if adult and unmarried
-		if(this.isAliveMajorAndSingle()) migChance += 0.1;		
+			//if adult without a job
+			if(!this.employment) migChance += 0.1;
 
-		//if adult without a job
-		if(!this.employment) migChance += 0.1;
+			//if hungry
+			migChance += this.hunger/10;
 
-		//if hungry
-		migChance += this.hunger/10;
-
-		if(randomBoolFromRate(migChance)) this.migrate();
+			if(randomBoolFromRate(migChance)) this.migrate();
+		}
 	};
 
 	this.migrate = function (destination) {
-		if (!destination) {
-			//if no destination is set, we have to find one randomly
-			destination = getRandomFromArray(this.residence.getNeighbours());
-		}
-		//if the person migrates, they go with their family (spouse and young children)
-		if(this.spouse && this.spouse.alive) {
-			this.spouse.migrate(destination);
-		}
-		for (var i = 0; i < this.children.length; i++) {
-			if (this.children[i].alive && this.children.age < 15) this.children[i].migrate(destination);
-		}
+		if (!this.migrated || (this.migrated+2) < game.time.seasonCounter) {
+			this.migrated = game.time.seasonCounter;
+			this.migrations ++;
+			game.time.log.migrations++;
 
-		// TODO actual residence change 
+			if (!destination) {
+				//if no destination is set, we have to find one randomly
+				destination = this.residence.getRandomLandNeighbour().id;
+			}
+			//if the person migrates, they go with their family (spouse and young children)
+			if(this.spouse && this.spouse.alive) {
+				this.spouse.migrate(destination);
+			}
+			for (var i = 0; i < this.children.length; i++) {
+				if (this.children[i].alive && this.children.age < 15) this.children[i].migrate(destination);
+			}
+
+			// TODO actual residence change 
+			this.residence.population.splice(this.residence.population.indexOf(this),1);
+
+			var d = game.getPlotById(destination);
+			this.residence = d;
+			d.population.push(this);
+		}
 	};
 
 	this.renderDetails = function () {
 		var d = '<div>';
-		d += '<p>'+this.renderLink()+' ('+Math.floor(this.age)+', '+this.sex+')</p>';
+		d += '<p>'+this.id+' '+this.renderLink()+' ('+Math.floor(this.age)+', '+this.sex+')</p>';
+
+		d += '<p>lives in '+this.residence.getName()+'</p>';
+		if (this.placeOfBirth) d += '<p>born in '+this.placeOfBirth.getName()+'</p>';
 
 		if (!this.alive) d += '<p>'+this.causeOfDeath+'</p>';
 
@@ -213,7 +231,7 @@ function Person (data) {
 		// children
 		d += '<table>';
 		for(var i = 0; i < this.children.length; i++) {
-			d += '<tr><td>'+this.children[i].renderLink()+'</td>';
+			d += '<tr><td>'+this.children[i].id+'</td><td>'+this.children[i].renderLink()+'</td>';
 			d += '<td>('+Math.floor(this.children[i].age)+')</td>';
 			d += '<td>';
 			if(this.children[i].spouse && this.children[i].spouse.alive) d += 'm';

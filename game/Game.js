@@ -89,6 +89,7 @@ function Game (startmode) {
 				return this.plots[i];
 			}
 		}
+		throw new Error('Couldn\'t find plot with id '+id);
 	}
 	this.getPersonById = function (id) {
 		for (var i = 0; i < this.people.length; i++) {

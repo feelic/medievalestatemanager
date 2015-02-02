@@ -44,6 +44,7 @@ function Seasons (i, year, history) {
 			marriages : 0,
 			ages : [],
 			alivePopulation : 0,
+			migrations : 0,
 		};
 	};
 

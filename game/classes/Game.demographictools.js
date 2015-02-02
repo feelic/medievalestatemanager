@@ -33,6 +33,7 @@ Game.prototype.logDemographicData = function () {
 		console.log('marriages: '+game.time.log.marriages);
 		console.log('births: '+game.time.log.births);
 		console.log('deaths: '+game.time.log.deaths);
+		console.log('migrations: '+game.time.log.migrations);
 		console.log('average age of death (all time): '+this.getAvgAgeOfDeath());
 	console.groupEnd();
 };
