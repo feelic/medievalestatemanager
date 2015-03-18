@@ -1,31 +1,31 @@
 /***************************** DISEASES ********************************/
 Game.prototype.diseases = {
 	"Flux" : {
-		"activeEpidemy" : false, 
+		"activeEpidemy" : false,
 		"transmissionFactor" : 0.3,
 		"stages" : [-5],
 		"baseCureChance" : 0.4
 	},
 	"Leprosy" : {
-		"activeEpidemy" : false, 
+		"activeEpidemy" : false,
 		"transmissionFactor" : 0.1,
 		"stages" : [-10, -5],
 		"baseCureChance" : 0.1
 	},
 	"Yellow Fever" : {
-		"activeEpidemy" : false, 
+		"activeEpidemy" : false,
 		"transmissionFactor" : 0.2,
 		"stages" : [-10],
 		"baseCureChance" : 0.3
 	},
 	"Bloody Flux" : {
-		"activeEpidemy" : false, 
+		"activeEpidemy" : false,
 		"transmissionFactor" : 0.2,
 		"stages" : [-15],
 		"baseCureChance" : 0.3
 	},
 	"Plague" : {
-		"activeEpidemy" : false, 
+		"activeEpidemy" : false,
 		"transmissionFactor" : 0.5,
 		"stages" : [-20],
 		"baseCureChance" : 0.2
@@ -38,7 +38,7 @@ Game.prototype.plotTypes = [ "manor", "city", "tenure", "servile land", "inhabit
 Game.prototype.exploitationTypes = ["agriculture", "herding", "foresting", "quarry", "mining"] ;
 
 /***************************** CRAFTS ********************************/
-Game.prototype.crafts = ["Builder"]
+Game.prototype.crafts = ["Builder"];
 Game.prototype.craftLevels = ["apprentice", "journeyman", "master"];
 
 /***************************** COLOR PALETTES ********************************/

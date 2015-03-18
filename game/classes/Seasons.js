@@ -1,5 +1,5 @@
 function Seasons (i, year, history) {
-	
+
 	this.startYear = year;
 	this.currentYear = year;
 
@@ -16,7 +16,7 @@ function Seasons (i, year, history) {
 	this.nextSeason = function () {
 		this.seasonCounter++;
 
-		if (this.seasonCounter%4 == 0) this.currentYear++;
+		if (this.seasonCounter%4 === 0) this.currentYear++;
 
 		this.current = this.seasonNames[this.seasonCounter%4];
 

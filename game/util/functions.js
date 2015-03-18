@@ -5,9 +5,9 @@ function cap (n, upperBound, lowerBound) {
 }
 
 function array_intersection(a, b) {
-  var result = new Array();
+  var result = [];
   while( a.length > 0 && b.length > 0 )
-  {  
+  {
      if      (a[0] < b[0] ){ a.shift(); }
      else if (a[0] > b[0] ){ b.shift(); }
      else /* they're equal */
@@ -21,7 +21,7 @@ function array_intersection(a, b) {
 }
 
 function isVowel(c) {
-    return ['a','A', 'e','E', 'i', 'I', 'o', 'O', 'u','U', 'y', 'Y', 'é', 'É', 'è', 'È'].indexOf(c) !== -1
+    return ['a','A', 'e','E', 'i', 'I', 'o', 'O', 'u','U', 'y', 'Y', 'é', 'É', 'è', 'È'].indexOf(c) !== -1;
 }
 
 function average(array) {
@@ -30,14 +30,14 @@ function average(array) {
 		sum += parseInt( array[i], 10 ); //don't forget to add the base
 	}
 
-	if (sum > 0) return avg = sum/array.length;
+	if (sum > 0) return sum/array.length;
 	else return 0;
 }
 
 function sum(array) {
 	var sum = 0;
 	for( var i = 0; i < array.length; i++ ){
-		sum += parseInt( array[i], 10 ); 
+		sum += parseInt( array[i], 10 );
 	}
 
 	return sum;

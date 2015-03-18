@@ -15,7 +15,7 @@ function Demesne (colorPalette) {
 		var tovisit = this.manor.getNeighbours();
 
 		visited.push(this.manor.id);
-		
+
 		while( tovisit.length > 0) {
 			var p = game.getPlotById(tovisit.shift());
 			if (p.biome != 'mountains' && p.biome != 'sea' && p.type == 'inhabited') {
@@ -34,6 +34,6 @@ function Demesne (colorPalette) {
 			}
 		}
 
-	}
+	};
 
 }

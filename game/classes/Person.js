@@ -28,13 +28,13 @@ function Person (data) {
 	 * Returns false or a New Child entity
 	 */
 	this.haveChild = function () {
-		if ((this.spouse) && (this.spouse.alive) && this.sex == 'f' && this.age >= 15 && this.age <= 45 && ( this.children.length == 0 || this.children[this.children.length-1].wasBornNSeasonsAgo(5) ) && this.children.length < 16 && !this.pregnant) {
+		if ((this.spouse) && (this.spouse.alive) && this.sex == 'f' && this.age >= 15 && this.age <= 45 && ( this.children.length === 0 || this.children[this.children.length-1].wasBornNSeasonsAgo(5) ) && this.children.length < 16 && !this.pregnant) {
 			var chances = 0.9 * (( 45 - this.age ) / 30);
 			if (randomBoolFromRate(chances)) {
 
 				// We need to determine the social status of the child
 				var status = 'serf';
-				
+
 				var s = ['m','f'];
 				var p = new Person({
 						'birthDate' : game.time.seasonCounter,
@@ -163,11 +163,11 @@ function Person (data) {
 		else return true;
 	};
 
-	this.testMigration = function () {	
+	this.testMigration = function () {
 		if(!this.migrated || this.migrated+2 < game.time.seasonCounter) {
 			var migChance = 0;
 			//if adult and unmarried
-			if(this.isAliveMajorAndSingle()) migChance += 0.1;		
+			if(this.isAliveMajorAndSingle()) migChance += 0.1;
 
 			//if adult without a job
 			if(!this.employment) migChance += 0.1;
@@ -197,7 +197,7 @@ function Person (data) {
 				if (this.children[i].alive && this.children.age < 15) this.children[i].migrate(destination);
 			}
 
-			// TODO actual residence change 
+			// TODO actual residence change
 			this.residence.population.splice(this.residence.population.indexOf(this),1);
 
 			var d = game.getPlotById(destination);
@@ -238,7 +238,7 @@ function Person (data) {
 			else if (this.children[i].spouse) d += 'w';
 			d += '</td>';
 			d += '</tr>';
-			
+
 		}
 
 		d += '</table></div>';

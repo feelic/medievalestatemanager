@@ -1,5 +1,5 @@
 /*
- * Logs population info to the log 
+ * Logs population info to the log
  */
 Game.prototype.census = function () {
 	for (var i = 0; i < this.people.length;i++) {
@@ -19,7 +19,7 @@ Game.prototype.getAvgAgeOfDeath = function () {
 			a++;
 		}
 	}
-	return (t/a)
+	return (t/a);
 };
 
 /*
@@ -37,5 +37,3 @@ Game.prototype.logDemographicData = function () {
 		console.log('average age of death (all time): '+this.getAvgAgeOfDeath());
 	console.groupEnd();
 };
-
-
