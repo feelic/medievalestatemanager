@@ -18,8 +18,11 @@ function Game (startmode) {
 		var c = '<div id="leftmenu">';
 
 		// Map mode buttons
-		c += '<div><a id="geoMode" class="btn btn-action">G</a> <a id="politicalMode" class="btn btn-action">P</a></div>';
-
+		c += '<div>';
+		c += '<a id="geoMode" class="btn btn-action">G</a> ';
+		c += '<a id="demographicMode" class="btn btn-action">D</a> ';
+		c += '<a id="politicalMode" class="btn btn-action">P</a> ';
+		c += '</div>';
 		// Weather box & next turn button
 		c += '<div id="weatherbox">'+this.time.getWeatherReport()+'</div><div><a id="nextTurn" class="btn">next turn</a></div>';
 
@@ -55,7 +58,7 @@ function Game (startmode) {
 			this.plots[i].seasonChange();
 		}
 
-		//if ( this.getCurrentSelection() ) document.getElementById("rightpanel").innerHTML = this.engine.selectedCell.ownerObject.displayDetails();
+		this.renderMap();
 	}
 
 	/*
@@ -63,10 +66,12 @@ function Game (startmode) {
 	 */
 	this.fastForward = function(years) {
 		console.time('Fast forwarding game '+years+' years');
-		for(var i = 0; i < years*4; i++) {
+		for(var i = 0; i < years*4; i++) {
 			this.nextTurn();
 		}
 		console.timeEnd('Fast forwarding game '+years+' years');
+
+		this.renderMap();
 	};
 
 	/*
@@ -83,7 +88,7 @@ function Game (startmode) {
 		}
 	}
 
-	this.getPlotById = function (id) {
+	this.getPlotById = function (id) {
 		for (var i = 0; i < this.plots.length; i++) {
 			if (this.plots[i].id == id) {
 				return this.plots[i];
@@ -91,7 +96,7 @@ function Game (startmode) {
 		}
 		throw new Error('Couldn\'t find plot with id '+id);
 	}
-	this.getPersonById = function (id) {
+	this.getPersonById = function (id) {
 		for (var i = 0; i < this.people.length; i++) {
 			if (this.people[i].id == id) {
 				return this.people[i];
@@ -123,7 +128,7 @@ function Game (startmode) {
 		});
 	}
 
-	this.generateRandomSociety = function (size, population) {
+	this.generateRandomSociety = function (size, population) {
 
 		// generate manors to rule over the peasants
 		//for (var i = 0; i < size/30; i++) {
@@ -151,7 +156,7 @@ function Game (startmode) {
 			d.lord = lord;
 
 			var demesneSize = 2+ Math.floor(Math.random()*4);
-			for (var j = 0; j < demesneSize; j++) {
+			for (var j = 0; j < demesneSize; j++) {
 				d.claimFreeLand();
 			}
 		}
@@ -163,7 +168,7 @@ function Game (startmode) {
 
 	}
 
-	//default dev values 
+	//default dev values
 	if (startmode == 'dev') {
 		this.localisation = new Localisation('France');
 		that.player = new Player('human');
@@ -171,7 +176,7 @@ function Game (startmode) {
 		that.time = new Seasons(0, 963);
 
 		document.write(that.getUiContainer(true));
-			
+
 		that.engine = new Ptolemy('canvas');
 
 	}
@@ -186,6 +191,10 @@ function Game (startmode) {
 
 	document.getElementById("politicalMode").addEventListener("click", function( event ) {
 		that.changeDisplayMode('political');
+	}, false);
+
+	document.getElementById("demographicMode").addEventListener("click", function( event ) {
+		that.changeDisplayMode('demographic');
 	}, false);
 
 	$(document).on('click', '.person-link', function() {

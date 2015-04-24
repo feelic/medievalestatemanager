@@ -16,16 +16,18 @@ function Seasons (i, year, history) {
 	this.nextSeason = function () {
 		this.seasonCounter++;
 
-		if (this.seasonCounter%4 === 0) this.currentYear++;
+		if (this.seasonCounter % 4 === 0) {
+			this.currentYear++;
+		}
 
-		this.current = this.seasonNames[this.seasonCounter%4];
+		this.current = this.seasonNames[this.seasonCounter % 4];
 
 		this.history.push(this.log);
 		this.log = this.getBlankLog();
 	};
 
 	this.getSeasonName = function (i) {
-		return this.seasonNames[i%4];
+		return this.seasonNames[i % 4];
 	};
 
 	this.getWeatherReport = function () {

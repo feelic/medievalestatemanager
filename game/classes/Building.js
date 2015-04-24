@@ -2,16 +2,17 @@ function Building () {
 	this.types = {'Mill' :{
 
 				},
-				'Spinner' : {
+				'Spinner': {
 
 				},
-				'Weaver' : {
+				'Weaver': {
 
 				},
-				'Road' : {
+				'Road': {
 
 				},
-				'Tanner' : {
+				'Tanner': {
 
-				}, };
+				}
+			};
 }

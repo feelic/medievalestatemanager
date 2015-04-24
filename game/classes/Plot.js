@@ -12,10 +12,10 @@ function Plot (cell) {
 	else if (this.height == 2) this.biome = 'moors';
 	else if (this.height == 3) this.biome = 'hills';
 	else if (this.height >= 4) this.biome = 'mountains';
-	
-	this.type = "";
 
-	this.surface = Math.abs(Math.round(this.cell.getArea()));
+	this.type = '';
+
+	this.surface = Math.abs(Math.round(this.cell.getArea() / 20));
 	this.baseHumidity = 0;
 
 	this.owner = null;
@@ -25,16 +25,16 @@ function Plot (cell) {
 	this.currentEpidemy = null;
 	this.buildings = [];
 
-	this.exploitationType = "";
+	this.exploitationType = '';
 
 	this.soilQuality = 100;
 	this.forestation = 80;
 	this.mineralResources = {
-		"C" : 0,
-		"Fe" : 0,
-		"Cu" : 0,
-		"Ag" : 0,
-		"Au" : 0
+		'C' : 0,
+		'Fe' : 0,
+		'Cu' : 0,
+		'Ag' : 0,
+		'Au' : 0
 	};
 
 	this.naturalRegrowth = function () {
@@ -49,13 +49,13 @@ function Plot (cell) {
 			ffactor += 0.02;
 			sfactor += 0.02;
 		}
-		else if ( (humidity / 2) >= 30 ) { 
+		else if ( (humidity / 2) >= 30 ) {
 			ffactor += 0.01;
 			sfactor += 0.01;
 		}
 		else if ( (humidity / 2) < 10 ) {
 			ffactor -= 0.02;
-			sfactor -= 0.01;		
+			sfactor -= 0.01;
 		}
 
 		//current forestation
@@ -63,24 +63,24 @@ function Plot (cell) {
 
 		//pop density
 		switch(this.getPopDensityBracket()) {
-			case 'high': 
+			case 'high':
 				ffactor -= 0.01;
 				sfactor -= 0.01;
 				break;
-			case 'medium': 
+			case 'medium':
 				break;
-			case 'low': 
+			case 'low':
 				ffactor += 0.01;
 				sfactor += 0.01;
 				break;
 		}
-		//Cattle presence => good for the soil, but bad for the forests ? 
+		//Cattle presence => good for the soil, but bad for the forests ?
 
 		//TODO
-		this.forestation = cap(Math.floor(this.forestation * ffactor*10)/10, 100, 0); 
-		this.soilQuality = cap(Math.floor(this.soilQuality * sfactor*10)/10, 100, 0);  
+		this.forestation = cap(Math.floor(this.forestation * ffactor*10)/10, 100, 0);
+		this.soilQuality = cap(Math.floor(this.soilQuality * sfactor*10)/10, 100, 0);
 	};
-	
+
 	this.setRegion = function (r) {
 		this.region = r;
 		r.addPlot(this);
@@ -92,18 +92,29 @@ function Plot (cell) {
 	};
 
 	this.getPopDensity = function () {
-		var d = 0;
-		if (!this.getPop() === 0) d = this.surface / this.getPop();
-		return d;
+		if (this.getPop() === 0) {
+			return 0;
+		}
+		return Math.floor( this.getPop() / this.surface * 100) ;
 	};
 
 	this.getPopDensityBracket = function () {
-		var d = this.getPopDensity();
-		if (d > 2000) return 'high';
-		else if (d > 1000) return 'medium';
-		else return 'low';
+		var d = this.getPopDensity() * 1;
+		if (d >= 100) {
+			return 'very high';
+		}
+		if (d >= 60) {
+			return 'high';
+		}
+		if (d >= 30) {
+			return 'medium';
+		}
+		if (d >= 1) {
+			return 'low';
+		}
+		return 'empty';
 	};
-	
+
 	this.seasonChange = function () {
 		if (this.cell.height >= 1 ) {
 			for (var i = 0; i < this.population.length; i++){
@@ -129,7 +140,7 @@ function Plot (cell) {
 	this.makeMariages = function () {
 		var mSingles = [];
 		var fSingles = [];
-		
+
 		for (var i = 0; i < this.population.length; i++){
 			if ( this.population[i].isAliveMajorAndSingle() ) {
 				if (this.population[i].sex == 'f' && this.population[i].age < 36 ) fSingles.push(this.population[i]);
@@ -167,30 +178,30 @@ function Plot (cell) {
 	 */
 	this.getRenderingParameters = function () {
 		return {
-			"forestation" : this.forestation
+			'forestation' : this.forestation
 		};
 	};
 
 	this.displayDetails = function () {
 		var d = '<div>';
-		d += "<p>id: "+this.id+" ("+this.biome+")</p>";
-		if (this.name) d += "<p>name: "+this.name+"</p>";
-		if (this.demesne) d += "<p>part of the "+this.demesne.lord.lastname+" estate</p>";
-		d += "<p>height: "+this.height+"</p>";
-		d += "<p>area: "+this.surface+" ha</p>";
-		d += "<p>population: "+this.getPop()+"</p>";
-		d += "<p>forestation: "+this.forestation+" %</p>";
-		d += "<p>soil quality: "+this.soilQuality+" %</p>";
-		d += "</div>";
+		d += '<p>id: '+this.id+' ('+this.biome+')</p>';
+		if (this.name) d += '<p>name: '+this.name+'</p>';
+		if (this.demesne) d += '<p>part of the '+this.demesne.lord.lastname+' estate</p>';
+		d += '<p>height: '+this.height+'</p>';
+		d += '<p>area: '+this.surface+' ha</p>';
+		d += '<p>population: ' + this.getPop() + ' (' + this.getPopDensityBracket() + ' density)</p>';
+		d += '<p>forestation: ' + this.forestation + ' %</p>';
+		d += '<p>soil quality: ' + this.soilQuality + ' %</p>';
+		d += '</div>';
 		d += '<div>';
 		d += this.renderPopList();
-		d += "</div>";
+		d += '</div>';
 		return d;
 	}
 
 	this.renderPopList = function (){
 		var p = '<table>';
-		for(var i = 0; i < this.population.length; i++) {
+		for (var i = 0; i < this.population.length; i++) {
 			p += '<tr>';
 			p += '<td>'+this.population[i].renderLink()+'</td>';
 			p += '<td>('+Math.floor(this.population[i].age)+')</td>';
@@ -199,7 +210,7 @@ function Plot (cell) {
 			else if (this.population[i].spouse) p += 'w';
 			p += '</td>';
 			p += '</tr>';
-			
+
 		}
 
 		p += '</table>';
@@ -248,14 +259,24 @@ function Plot (cell) {
 	this.getRenderingParameters = function () {
 		var p = {style : {  }, data : {}};
 
-		if ( game.displayMode == 'geo' ) {
+		if ( game.displayMode === 'geo' ) {
 			//if (this.biome == 'coast') p.style.fill = '#F5DEB3';
 		}
-		else if ( game.displayMode == 'political' ) {
+		if ( game.displayMode === 'political' ) {
 			if (this.demesne) {
 				p.style.fill = this.demesne.palette.primary;
 			}
-			else if (this.biome != 'sea') p.style.fill = '#AAAAAA';
+			else {
+				if (this.biome !== 'sea') {
+					p.style.fill = '#AAAAAA';
+				}
+			}
+		}
+		if (game.displayMode === 'demographic') {
+			if (this.biome !== 'sea') {
+				var c = {'very high': '#E36F6B', 'high': '#D1AB69', 'medium': '#C3D169', 'low': '#53BA41', 'empty': '#AAAAAA'};
+				p.style.fill = c[this.getPopDensityBracket()];
+			}
 		}
 
 		if (this.type == 'manor') {
@@ -276,7 +297,7 @@ function Plot (cell) {
 
 			for (var i = 0; i < this.cell.neighbours.length; i++) {
 				if(this.demesne != game.getPlotById(this.cell.neighbours[i]).demesne) {
-					p.style.borders[this.cell.neighbours[i]] = {		
+					p.style.borders[this.cell.neighbours[i]] = {
 														'stroke': '#333333',
 														'stroke-width': 2,
 														'stroke-linejoin': 'round',

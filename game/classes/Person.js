@@ -35,7 +35,7 @@ function Person (data) {
 				// We need to determine the social status of the child
 				var status = 'serf';
 
-				var s = ['m','f'];
+				var s = ['m', 'f'];
 				var p = new Person({
 						'birthDate' : game.time.seasonCounter,
 						'birthYear' : game.time.currentYear,
@@ -62,11 +62,10 @@ function Person (data) {
 				game.time.log.births++;
 
 				return p;
-
 			}
-			else return false;
 		}
-		else return false;
+
+		return false;
 	};
 
 	this.wasBornNSeasonsAgo = function (n) {

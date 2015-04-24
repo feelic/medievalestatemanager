@@ -4,12 +4,11 @@ body {
 }
 
 #leftmenu {
-	width:180px;
+	width:calc(10% - 20px);
 	height:800px;
-	padding:1px;
-	display:block;
-	float:left;
-	border:1px solid #666;
+	padding:10px;
+	display:inline-block;
+	vertical-align:top;
 }
 
 #weatherbox {
@@ -19,17 +18,15 @@ body {
 #mappanel {
 	width:800px;
 	height:800px;
-	display:block;
-	float:left;
-	border:1px solid #666;
+	display:inline-block;
 }
 
 #rightpanel {
-	width:800px;
+	width:calc(100% - 800px - 10% - 20px);
+	padding:10px;
 	height:800px;
-	display:block;
-	float:left;
-	border:1px solid #666;
+	display:inline-block;
+	vertical-align:top;
 }
 .btn {
 	display: inline-block;
