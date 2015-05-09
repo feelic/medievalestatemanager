@@ -1,6 +1,8 @@
 body {
 	margin:0;
 	padding:0;
+	font-family:'roboto', 'comic-sans neue', sans-serif;
+	background-color:#FFE;
 }
 
 #leftmenu {
@@ -22,22 +24,25 @@ body {
 }
 
 #rightpanel {
-	width:calc(100% - 800px - 10% - 20px);
+	width:calc(100% - 800px - 10% - 42px);
 	padding:10px;
-	height:800px;
+	margin:10px;
+	border:1px solid #929292;
+	background-color:#EED;
+	height:calc(800px - 42px);
 	display:inline-block;
 	vertical-align:top;
 }
 .btn {
 	display: inline-block;
 	box-sizing: border-box;
-    color: #FFF;
-    text-align: center;
-    font-size:16px;
-    padding:0 25px;
+	color: #FFF;
+	text-align: center;
+	font-size:16px;
+	padding:0 25px;
 	line-height:28px;
-    border-radius:2px;
-    text-decoration:none;
+	border-radius:2px;
+	text-decoration:none;
 	border:0;
 	min-width:120px;
 	background:#A3A3A3;
@@ -55,16 +60,16 @@ body {
 	min-width:0;
 }
 
-.person-link {
+.link {
 	cursor:pointer;
-	color:#222;
+	color:#604;
 }
-.person-link:hover {
-	color:#444;
+.link:hover {
+	color:#A26;
 }
 .person-link.dead {
-	color:#888;
+	color:#D6A;
 }
 .person-link.dead:hover {
-	color:#AAA;
+	color:#F8C;
 }

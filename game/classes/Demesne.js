@@ -1,4 +1,6 @@
-function Demesne (colorPalette) {
+function Demesne (id, colorPalette) {
+
+	this.id = id;
 
 	this.owner = null;
 	this.lord = null;

@@ -11,29 +11,6 @@ function Game (startmode) {
 	this.displayMode = 'geo';
 
 	/*
-	 * gets Game Container
-	 */
-	this.getUiContainer = function (debug) {
-
-		var c = '<div id="leftmenu">';
-
-		// Map mode buttons
-		c += '<div>';
-		c += '<a id="geoMode" class="btn btn-action">G</a> ';
-		c += '<a id="demographicMode" class="btn btn-action">D</a> ';
-		c += '<a id="politicalMode" class="btn btn-action">P</a> ';
-		c += '</div>';
-		// Weather box & next turn button
-		c += '<div id="weatherbox">'+this.time.getWeatherReport()+'</div><div><a id="nextTurn" class="btn">next turn</a></div>';
-
-		if (debug) c += '<div style="float:left;" id="enginestatus"></div>';
-		c += '</div>';
-		c += '<div id="mappanel"><div id="canvas" ></div></div>';
-		c += '<div id="rightpanel"></div>';
-		return c;
-	};
-
-	/*
 	 * tells the plots to render, they then do their stuff themselves
 	 */
 	this.renderMap = function () {
@@ -80,7 +57,7 @@ function Game (startmode) {
 	this.bindCellEventsListeners = function () {
 		for (var i = 0; i < this.engine.cells.length; i++) {
 			this.engine.cells[i].on('select',function(){
-				document.getElementById("rightpanel").innerHTML = this.ownerObject.displayDetails();
+				document.getElementById("rightpanel").innerHTML = this.ownerObject.renderDetails();
 			});
 			this.engine.cells[i].on('deselect',function(){
 				//console.log('custom deselect event handler '+this.id);
@@ -103,6 +80,13 @@ function Game (startmode) {
 			}
 		}
 	}
+	this.getDemesneById = function (id) {
+		for (var i = 0; i < this.demesnes.length; i++) {
+			if (this.demesnes[i].id == id) {
+				return this.demesnes[i];
+			}
+		}
+	}
 
 	this.generateRandomWorld = function (size, maxPopulation) {
 		var that = this;
@@ -111,7 +95,7 @@ function Game (startmode) {
 			for (var i = 0; i < this.cells.length; i++) {
 
 				this.cells[i].on('select',function(){
-					document.getElementById("rightpanel").innerHTML = this.ownerObject.displayDetails();
+					document.getElementById("rightpanel").innerHTML = this.ownerObject.renderDetails();
 				});
 				this.cells[i].on('deselect',function(){
 					//console.log('custom deselect event handler '+this.id);
@@ -131,9 +115,8 @@ function Game (startmode) {
 	this.generateRandomSociety = function (size, population) {
 
 		// generate manors to rule over the peasants
-		//for (var i = 0; i < size/30; i++) {
-		for (var i = 0; i < 1; i++) {
-			var demesne = new Demesne ();
+		for (var i = 0; i < size/80; i++) {
+			var demesne = new Demesne (i);
 			this.demesnes.push(demesne);
 
 			var plot = getRandomInArray(this.landPlots);
@@ -197,8 +180,17 @@ function Game (startmode) {
 		that.changeDisplayMode('demographic');
 	}, false);
 
-	$(document).on('click', '.person-link', function() {
-		var p = that.getPersonById($(this).attr('data-personid'));
+	$(document).on('click', '.link', function() {
+		var p;
+		if($(this).hasClass('person-link')) {
+			p = that.getPersonById($(this).attr('data-personid'));
+		}
+		else if ($(this).hasClass('plot-link')) {
+			p = that.getPlotById($(this).attr('data-plotid'));
+		}
+		else if ($(this).hasClass('demesne-link')) {
+			p = that.getDemesneById($(this).attr('data-demesneid'));
+		}
 		$('#rightpanel').html(p.renderDetails());
 	});
 }
